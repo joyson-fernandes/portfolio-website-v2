@@ -1,0 +1,159 @@
+{
+  "profile": {
+    "name": "Joyson Fernandes",
+    "title": "Cloud DevOps Engineer",
+    "location": "London, UK",
+    "summary": "Passionate about automation, cloud architecture, and building efficient infrastructure solutions with AWS, Azure, and DevOps best practices."
+  },
+  "experiences": [
+    {
+      "id": "levelup-2024",
+      "title": "Cloud DevOps Engineer",
+      "company": "Level Up In Tech",
+      "location": "Remote",
+      "period": "Aug 2024 - Present",
+      "startDate": "2024-08-01",
+      "endDate": null,
+      "type": "Part-time",
+      "current": true,
+      "icon": "Building",
+      "color": "from-green-500 to-green-600",
+      "description": "Leading cloud infrastructure design and implementation for enterprise clients while mentoring new engineers.",
+      "achievements": [
+        "Designing and implementing cloud infrastructure solutions for enterprise clients",
+        "Mentoring new DevOps engineers in cloud best practices and automation",
+        "Leading migration projects from on-premises to cloud environments",
+        "Developing Infrastructure as Code templates for rapid deployment"
+      ],
+      "technologies": [
+        "AWS",
+        "Azure",
+        "Terraform",
+        "Docker",
+        "Kubernetes"
+      ],
+      "linkedinUrl": "https://www.linkedin.com/company/levelupintech/",
+      "companyLogo": null
+    },
+    {
+      "id": "airinmar-2022",
+      "title": "Infrastructure Support Analyst",
+      "company": "Airinmar",
+      "location": "UK",
+      "period": "Nov 2022 - Present",
+      "startDate": "2022-11-01",
+      "endDate": null,
+      "type": "Full-time",
+      "current": true,
+      "icon": "Target",
+      "color": "from-blue-500 to-blue-600",
+      "description": "Managing critical infrastructure supporting 500+ users with focus on uptime and automation.",
+      "achievements": [
+        "Managed critical infrastructure supporting 500+ users with 99.5% uptime",
+        "Implemented automated monitoring solutions reducing incident response time by 60%",
+        "Led virtualization projects using VMware vSphere and Hyper-V",
+        "Developed PowerShell scripts for system administration and automation"
+      ],
+      "technologies": [
+        "VMware",
+        "Hyper-V",
+        "PowerShell",
+        "Windows Server",
+        "Active Directory"
+      ],
+      "linkedinUrl": "https://www.linkedin.com/company/airinmar/",
+      "companyLogo": null
+    },
+    {
+      "id": "kaplan-2022",
+      "title": "Senior 2nd Line Support Engineer",
+      "company": "Kaplan UK",
+      "location": "London, UK",
+      "period": "Apr 2022 - Nov 2022",
+      "startDate": "2022-04-01",
+      "endDate": "2022-11-01",
+      "type": "Full-time",
+      "current": false,
+      "icon": "Users",
+      "color": "from-purple-500 to-purple-600",
+      "description": "Provided technical support for complex infrastructure issues across multiple sites.",
+      "achievements": [
+        "Provided technical support for complex infrastructure issues across multiple sites",
+        "Improved ticket resolution time by 45% through process optimization",
+        "Collaborated with development teams on application deployment strategies",
+        "Maintained and updated system documentation and knowledge base"
+      ],
+      "technologies": [
+        "Windows Server",
+        "SQL Server",
+        "Network Administration",
+        "Troubleshooting"
+      ],
+      "linkedinUrl": "https://www.linkedin.com/company/kaplan/",
+      "companyLogo": null
+    },
+    {
+      "id": "thpt-senior-2021",
+      "title": "Senior ICT Support Engineer",
+      "company": "THPT",
+      "location": "London, UK",
+      "period": "Oct 2021 - Apr 2022",
+      "startDate": "2021-10-01",
+      "endDate": "2022-04-01",
+      "type": "Full-time",
+      "current": false,
+      "icon": "Award",
+      "color": "from-orange-500 to-orange-600",
+      "description": "Led a team of engineers in daily operations and implemented disaster recovery solutions.",
+      "achievements": [
+        "Led a team of 3 junior engineers in daily operations and problem resolution",
+        "Implemented backup and disaster recovery solutions improving data protection",
+        "Managed network infrastructure including VLANs, VPNs, and security policies",
+        "Reduced system downtime by 35% through proactive monitoring and maintenance"
+      ],
+      "technologies": [
+        "Network Management",
+        "Backup Solutions",
+        "Team Leadership",
+        "Security"
+      ],
+      "linkedinUrl": null,
+      "companyLogo": null
+    },
+    {
+      "id": "thpt-2020",
+      "title": "ICT Support Engineer",
+      "company": "THPT",
+      "location": "London, UK",
+      "period": "Jan 2020 - Oct 2021",
+      "startDate": "2020-01-01",
+      "endDate": "2021-10-01",
+      "type": "Full-time",
+      "current": false,
+      "icon": "TrendingUp",
+      "color": "from-cyan-500 to-cyan-600",
+      "description": "Provided comprehensive IT support across multiple departments with excellent customer service.",
+      "achievements": [
+        "Provided comprehensive IT support for 200+ users across multiple departments",
+        "Maintained Windows Server environments and Active Directory infrastructure",
+        "Implemented user access management and security compliance procedures",
+        "Achieved 95% user satisfaction rating through excellent customer service"
+      ],
+      "technologies": [
+        "Windows Server",
+        "Active Directory",
+        "Help Desk",
+        "User Management"
+      ],
+      "linkedinUrl": null,
+      "companyLogo": null
+    }
+  ],
+  "stats": {
+    "yearsExperience": "5+",
+    "usersSupported": "500+",
+    "uptimeAchieved": "99.5%",
+    "responseTimeImprovement": "60%"
+  },
+  "lastUpdated": "2025-08-17T13:28:08.194Z"
+}

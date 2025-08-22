@@ -1,0 +1,430 @@
+{
+  "lastUpdated": "2025-08-17T13:37:50.202Z",
+  "mediumUrl": "https://medium.com/@joysonfernandes",
+  "settings": {
+    "autoUpdateFromMedium": true,
+    "maxProjects": 10,
+    "fallbackToManual": true,
+    "includeManualProjects": true
+  },
+  "mediumArticles": [
+    {
+      "id": "medium-b5916a8cf6c6",
+      "title": "Deploy A Jenkins Server With Terraform on AWS",
+      "description": "Use Case: Your team would like to start using Jenkins as their CI/CD tool to create pipelines for DevOps projects",
+      "image": "https://cdn-images-1.medium.com/max/720/1*CEqsLwxqi3uFrMgHrDwmjw.png",
+      "technologies": [
+        "Jenkins",
+        "Ec2",
+        "Aws",
+        "AWS",
+        "Terraform",
+        "CI/CD"
+      ],
+      "icon": "Cloud",
+      "color": "from-orange-500 to-orange-600",
+      "mediumUrl": "https://joysonfernandes.medium.com/deploy-a-jenkins-server-with-terraform-on-aws-b5916a8cf6c6?source=rss-59fe078e2cb4------2",
+      "highlights": [
+        "Implemented cloud-native solutions",
+        "Automated deployment processes",
+        "Enhanced system reliability and performance"
+      ],
+      "type": "medium",
+      "featured": false,
+      "publishedDate": "2025-05-03T15:28:21.000Z",
+      "categories": [
+        "jenkins",
+        "ec2",
+        "aws",
+        "ci-cd-pipeline"
+      ],
+      "content": "<figure><img alt=\"\" src=\"https://cdn-images-1.medium.com/max/720/1*CEqsLwxqi3uFrMgHrDwmjw.png\" /></figure><h3>Use Case:</h3><p>Your team would like to start using Jenkins as their CI/CD tool to create pipelines for DevOps projects. They need you to create the Jenkins server using Terraform so that it can be used in other environments and so that changes to the environment are better tracked.</p><h3>Project Overview</h3><p>In this project we will deploy Jenkins server on AWS EC2 instance using terraform. Will keep it simple so will only create a main.tf file.</p><h3>Tasks:</h3><ol><li>Deploy 1 EC2 Instances in your Default VPC.</li><li>Bootstrap the EC2 instance with a script that will install and start Jenkins.</li><li>Create and assign a Security Group to the Jenkins Security Group that allows traffic on port 22 from your ip and allows traffic from port 8080.</li><li>Create a S3 bucket for your Jenkins Artifacts that is not open to the public.</li><li>Verify that you can reach your Je"
+    },
+    {
+      "id": "medium-e82f3bb1da3f",
+      "title": "Building and Deploying a Custom Web Server with Docker Containers",
+      "description": "Overview In this topic will cover: How to deploy containers on ubuntu server. How to install Apache webserver in the container and bind the host port to container port",
+      "image": "https://cdn-images-1.medium.com/max/1024/1*jqam2JULEooQePCgoKi1Pg.jpeg",
+      "technologies": [
+        "Docker",
+        "Apache",
+        "Ubuntu"
+      ],
+      "icon": "Container",
+      "color": "from-blue-600 to-cyan-600",
+      "mediumUrl": "https://joysonfernandes.medium.com/building-and-deploying-a-custom-web-server-with-docker-containers-e82f3bb1da3f?source=rss-59fe078e2cb4------2",
+      "highlights": [
+        "Implemented cloud-native solutions",
+        "Automated deployment processes",
+        "Enhanced system reliability and performance"
+      ],
+      "type": "medium",
+      "featured": false,
+      "publishedDate": "2025-02-09T12:54:07.000Z",
+      "categories": [
+        "container-images",
+        "docker",
+        "dockerhub",
+        "apache-web-server",
+        "containers"
+      ],
+      "content": "<figure><img alt=\"\" src=\"https://cdn-images-1.medium.com/max/1024/1*jqam2JULEooQePCgoKi1Pg.jpeg\" /></figure><h3>Overview</h3><p>In this topic will cover:</p><ul><li>How to deploy containers on ubuntu server.</li><li>How to install Apache webserver in the container and bind the host port to container port.</li><li>Customise Apache webpage and build a new container image with the the custom webpage.</li><li>Push the container image to Docker Hub.</li><li>And run container with the our image from Docker Hub.</li></ul><p>Will start from foundational, advanced, and complex tasks as outlined below.</p><blockquote><em>Get ready for some fun :)</em></blockquote><h3><strong>Foundational</strong>:</h3><p>1. Run a Docker Ubuntu container running detached and on port 80</p><p>2. Using BASH shell update all packages within the container .</p><p>3. Using BASH install Apache2 on the Ubuntu container.</p><p>4. Add a custom webpage.</p><p>5. Verify you can reach the webserver from your browser.</p><h3>"
+    },
+    {
+      "id": "medium-60efb9ae694c",
+      "title": "Hosting Static Website on Azure Blob Storage With Azure CDN",
+      "description": "Overview Will discuss three scenarios for hosting a static website on Azure Blob Storage With Azure CDN",
+      "image": "https://cdn-images-1.medium.com/max/1024/1*5lTJepK65DwF8wKVwqe2vQ.png",
+      "technologies": [
+        "Azure"
+      ],
+      "icon": "Cloud",
+      "color": "from-blue-500 to-blue-600",
+      "mediumUrl": "https://joysonfernandes.medium.com/hosting-static-website-on-azure-blob-storage-with-azure-cdn-60efb9ae694c?source=rss-59fe078e2cb4------2",
+      "highlights": [
+        "Implemented cloud-native solutions",
+        "Automated deployment processes",
+        "Enhanced system reliability and performance"
+      ],
+      "type": "medium",
+      "featured": false,
+      "publishedDate": "2025-01-04T19:08:04.000Z",
+      "categories": [
+        "static-website-hosting",
+        "azure",
+        "azure-cdn"
+      ],
+      "content": "<figure><img alt=\"\" src=\"https://cdn-images-1.medium.com/max/1024/1*5lTJepK65DwF8wKVwqe2vQ.png\" /></figure><h3>Overview</h3><p>Will discuss three scenarios for hosting a static website on Azure Blob Storage With Azure CDN.</p><h3><strong>1. Foundational:</strong></h3><ul><li>Create an Azure Storage account and a Blob container. Upload the provided index.html file to the Blob container.</li><li>Configure the Azure Blob container to host a static website and configure the appropriate public access level and specifying the default document.</li><li>Verify internet access by navigating to the provided Azure Blob Storage endpoint in a private or incognito browser.</li></ul><h3><strong>2. Advanced:</strong></h3><ul><li>Integrate Azure CDN with your Azure Blob Storage to improve global performance through edge caching.</li><li>Configure HTTPS on Azure CDN and ensure that HTTP traffic is redirected to HTTPS.</li><li>Verify the website is accessible through the Azure CDN endpoint and that HTTP "
+    },
+    {
+      "id": "medium-85087dd854e4",
+      "title": "Migrating Website from EC2 and Deploying To a Serverless DevOps Architecture",
+      "description": "Use Case: Vitality Sphere Company Overview Vitality Sphere is a health and wellness company dedicated to improving the well-being of its clients through a variety of services and products",
+      "image": "https://cdn-images-1.medium.com/max/1024/1*6uxg2JpCIFrjU5TUY7c85A.gif",
+      "technologies": [
+        "Serverless",
+        "S3",
+        "Lambda",
+        "AWS",
+        "CI/CD",
+        "DevOps"
+      ],
+      "icon": "Cloud",
+      "color": "from-orange-500 to-orange-600",
+      "mediumUrl": "https://joysonfernandes.medium.com/migrating-website-from-ec2-and-deploying-to-a-serverless-devops-architecture-85087dd854e4?source=rss-59fe078e2cb4------2",
+      "highlights": [
+        "Implemented cloud-native solutions",
+        "Automated deployment processes",
+        "Enhanced system reliability and performance"
+      ],
+      "type": "medium",
+      "featured": false,
+      "publishedDate": "2024-12-07T20:35:57.000Z",
+      "categories": [
+        "dynamodb",
+        "api-gateway",
+        "serverless",
+        "s3",
+        "lambda"
+      ],
+      "content": "<figure><img alt=\"\" src=\"https://cdn-images-1.medium.com/max/1024/1*6uxg2JpCIFrjU5TUY7c85A.gif\" /></figure><h3>Use Case:</h3><h4>Vitality Sphere Company Overview</h4><p>Vitality Sphere is a health and wellness company dedicated to improving the well-being of its clients through a variety of services and products. The company’s online presence has grown significantly, with a website hosted on an AWS EC2 instance. As the company continues to expand, they seek to modernize their infrastructure to improve performance, reduce costs, and gain better insights into user interactions.</p><h4>Project Overview</h4><p>As cloud DevOps engineers for Vitality Sphere, you are tasked with implementing a series of updates and improvements to the company’s website and deployment processes. The updates are crucial for maintaining a high level of service and staying competitive in the market. The company wants to migrate its website to a more cost-effective and scalable solution, implement user interaction"
+    },
+    {
+      "id": "medium-5cf8dd3a03d2",
+      "title": "Automate EC2 Shutdowns Using AWS Lambda, EventBridge and API Gateway",
+      "description": "Scenario: Our DevOps engineering team often uses a development lab to test releases of our application",
+      "image": "https://cdn-images-1.medium.com/max/1024/1*7VvBf3MvfFioLZAh7DoLJQ.gif",
+      "technologies": [
+        "Lambda",
+        "Aws",
+        "AWS",
+        "DevOps",
+        "Python",
+        "EC2"
+      ],
+      "icon": "Cloud",
+      "color": "from-orange-500 to-orange-600",
+      "mediumUrl": "https://joysonfernandes.medium.com/automate-ec2-shutdowns-using-aws-lambda-eventbridge-and-api-gateway-5cf8dd3a03d2?source=rss-59fe078e2cb4------2",
+      "highlights": [
+        "Implemented cloud-native solutions",
+        "Automated deployment processes",
+        "Enhanced system reliability and performance"
+      ],
+      "type": "medium",
+      "featured": false,
+      "publishedDate": "2024-12-01T18:01:54.000Z",
+      "categories": [
+        "api-gateway",
+        "eventbridge",
+        "lambda",
+        "aws",
+        "cloudwatch-logs"
+      ],
+      "content": "<figure><img alt=\"\" src=\"https://cdn-images-1.medium.com/max/1024/1*7VvBf3MvfFioLZAh7DoLJQ.gif\" /></figure><p>Scenario: Our DevOps engineering team often uses a development lab to test releases of our application. The Managers are complaining about the rising cost of our development lab and need to save money by stopping our (for this example) 3 ec2 instances after all engineers are clocked out.</p><h3>Overview</h3><p>In this topic will cover how to Automate EC2 Shutdowns Using AWS Lambda, EventBridge and API Gatewaycreate. Will start from foundational, advanced, and complex tasks as outlined below.</p><blockquote><em>Get ready for some fun :)</em></blockquote><h4>FOUNDATIONAL:</h4><ul><li>Create a python script that stops all running EC2 instances.</li><li>Create a Lambda function using Python 3.8 or higher runtime to run your script.</li><li>Add a trigger to the Lambda to ensure it runs on a set schedule daily. No one should be working past 7pm. (Note: to test you may need to modify "
+    },
+    {
+      "id": "medium-33e6dbaab7f2",
+      "title": "Building a Python Script to Extract File Information",
+      "description": "What is Python. Python is a high-level, interpreted programming language known for its readability and versatility",
+      "image": "https://cdn-images-1.medium.com/max/1024/1*OawpYawyb-d98cv-GmkkGA.jpeg",
+      "technologies": [
+        "Python",
+        "Linux"
+      ],
+      "icon": "Cpu",
+      "color": "from-gray-500 to-gray-600",
+      "mediumUrl": "https://joysonfernandes.medium.com/building-a-python-script-to-extract-file-information-33e6dbaab7f2?source=rss-59fe078e2cb4------2",
+      "highlights": [
+        "Implemented cloud-native solutions",
+        "Automated deployment processes",
+        "Enhanced system reliability and performance"
+      ],
+      "type": "medium",
+      "featured": false,
+      "publishedDate": "2024-11-23T10:44:10.000Z",
+      "categories": [
+        "data-extraction",
+        "python",
+        "scripting"
+      ],
+      "content": "<figure><img alt=\"\" src=\"https://cdn-images-1.medium.com/max/1024/1*OawpYawyb-d98cv-GmkkGA.jpeg\" /></figure><h3>What is Python?</h3><p>Python is a high-level, interpreted programming language known for its readability and versatility. Key features include:</p><ul><li>Ease of Learning: Simple syntax that resembles natural language.</li><li>Interpreted Language: Executes code line-by-line, facilitating quick testing and debugging.</li><li>Dynamic Typing: Variables don’t need explicit declarations.</li><li>Versatile Use Cases: Used in web development, data analysis, machine learning, automation, and more.</li><li>Rich Standard Library: Comes with built-in modules for various tasks.</li><li>Strong Community Support: A large, active community provides resources and libraries.</li><li>Cross-Platform Compatibility: Runs on various operating systems without modification.</li></ul><p>Python’s combination of simplicity and power makes it a popular choice among developers.</p><h3>Overview</h3><p>"
+    },
+    {
+      "id": "medium-eae80d50b3a6",
+      "title": "Building a CI/CD Pipeline for Hosting Resume Websites on S3 Using GitHub and AWS CodePipeline",
+      "description": "What is Continuous Integration (CI) and Continuous Delivery (CD). CI/CD stands for Continuous Integration and Continuous Delivery (or Deployment)",
+      "image": "https://cdn-images-1.medium.com/max/1024/1*AjE0-0YtJ_y8Z9eRyb7RIQ.gif",
+      "technologies": [
+        "Devops",
+        "AWS",
+        "CI/CD",
+        "DevOps",
+        "S3"
+      ],
+      "icon": "Cloud",
+      "color": "from-orange-500 to-orange-600",
+      "mediumUrl": "https://joysonfernandes.medium.com/building-a-ci-cd-pipeline-for-hosting-resume-websites-on-s3-using-github-and-aws-codepipeline-eae80d50b3a6?source=rss-59fe078e2cb4------2",
+      "highlights": [
+        "Implemented cloud-native solutions",
+        "Automated deployment processes",
+        "Enhanced system reliability and performance"
+      ],
+      "type": "medium",
+      "featured": false,
+      "publishedDate": "2024-11-07T23:27:40.000Z",
+      "categories": [
+        "github",
+        "automation",
+        "devops",
+        "aws-codepipeline",
+        "ci-cd-pipeline"
+      ],
+      "content": "<figure><img alt=\"\" src=\"https://cdn-images-1.medium.com/max/1024/1*AjE0-0YtJ_y8Z9eRyb7RIQ.gif\" /></figure><h4>What is Continuous Integration (CI) and Continuous Delivery (CD)?</h4><p>CI/CD stands for Continuous Integration and Continuous Delivery (or Deployment). It is a set of practices aimed at improving software development by automating code integration, testing, and deployment.</p><h4>Continuous Integration (CI)</h4><ul><li>Definition: Automatically integrates code changes from multiple contributors into a shared repository.</li></ul><p>Key Elements:</p><ul><li>Automated testing to catch errors early.</li><li>Build automation for seamless integration.</li></ul><p><strong>Benefits: </strong>Higher software quality, reduced integration issues.</p><h4>Continuous Delivery (CD)</h4><ul><li>Definition: Prepares code changes for release to production reliably.</li></ul><p>Key Elements:</p><ul><li>Automated deployment processes.</li><li>Comprehensive testing before releases.</li></ul><p>"
+    },
+    {
+      "id": "medium-f5a58c912d79",
+      "title": "DynamoDB in Action: A Practical Case Study for the Media Industry",
+      "description": "What is DynamoDB. AWS DynamoDB is a fully managed, NoSQL database service from AWS designed for high performance and scalability",
+      "image": "https://cdn-images-1.medium.com/max/1024/1*3bS0XmajC5ILacIPo4D8Lg.png",
+      "technologies": [
+        "Cloudformation",
+        "Aws",
+        "AWS",
+        "Linux",
+        "EC2",
+        "S3"
+      ],
+      "icon": "Cloud",
+      "color": "from-orange-500 to-orange-600",
+      "mediumUrl": "https://joysonfernandes.medium.com/dynamodb-in-action-a-practical-case-study-for-the-media-industry-f5a58c912d79?source=rss-59fe078e2cb4------2",
+      "highlights": [
+        "Implemented cloud-native solutions",
+        "Automated deployment processes",
+        "Enhanced system reliability and performance"
+      ],
+      "type": "medium",
+      "featured": false,
+      "publishedDate": "2024-11-03T20:56:45.000Z",
+      "categories": [
+        "nosql",
+        "cloudformation",
+        "dynamodb",
+        "aws",
+        "aws-cli"
+      ],
+      "content": "<figure><img alt=\"\" src=\"https://cdn-images-1.medium.com/max/1024/1*3bS0XmajC5ILacIPo4D8Lg.png\" /></figure><h4>What is DynamoDB?</h4><p>AWS DynamoDB is a fully managed, NoSQL database service from AWS designed for high performance and scalability. Key features include:</p><ul><li>NoSQL Data Model: Supports flexible data formats as a document and key-value store.</li><li>Automatic Scalability: Adapts to varying traffic loads without manual intervention.</li><li>High Availability: Replicates data across multiple regions for durability and fault tolerance.</li><li>Flexible Capacity Options: Offers provisioned capacity for fixed workloads or on-demand capacity for variable traffic.</li><li>Integration with AWS: Easily integrates with services like AWS Lambda and Amazon Kinesis.</li><li>Event-Driven Capabilities: Utilizes DynamoDB Streams to trigger actions based on data changes.</li></ul><p>DynamoDB is ideal for applications requiring reliable, low-latency data access, such as content mana"
+    },
+    {
+      "id": "medium-e93b95539717",
+      "title": "Deploying Joomla CMS: Two Tier Architecture on AWS With EC2 and RDS",
+      "description": "Business Case Scenario: Company Background: Joysontech is a travel agency specializing in global adventure tours, such as trekking and luxury cruises",
+      "image": "https://cdn-images-1.medium.com/max/1024/1*n-mzJvIljiGZgiJs0qIX9w.gif",
+      "technologies": [
+        "Aws",
+        "Ec2",
+        "AWS",
+        "MySQL",
+        "Apache",
+        "Ubuntu"
+      ],
+      "icon": "Cloud",
+      "color": "from-orange-500 to-orange-600",
+      "mediumUrl": "https://joysonfernandes.medium.com/deploying-joomla-cms-two-tier-architecture-on-aws-with-ec2-and-rds-e93b95539717?source=rss-59fe078e2cb4------2",
+      "highlights": [
+        "Implemented cloud-native solutions",
+        "Automated deployment processes",
+        "Enhanced system reliability and performance"
+      ],
+      "type": "medium",
+      "featured": false,
+      "publishedDate": "2024-10-27T14:29:45.000Z",
+      "categories": [
+        "content-management-system",
+        "aws",
+        "two-tier-architecture",
+        "rds-mysql",
+        "ec2"
+      ],
+      "content": "<figure><img alt=\"\" src=\"https://cdn-images-1.medium.com/max/1024/1*n-mzJvIljiGZgiJs0qIX9w.gif\" /></figure><h4>Business Case Scenario:</h4><p><strong>Company Background: </strong>Joysontech is a travel agency specializing in global adventure tours, such as trekking and luxury cruises. They plan to enhance operations and customer engagement with a new Joomla-based website.</p><p><strong>Project Goal: </strong>Launch a scalable, secure website as a central hub for travel services to support company growth.</p><h4>Architecture Overview:</h4><p><strong>Two-Tier Architecture:</strong></p><ul><li><strong>Web Tier:</strong> Uses Apache on an EC2 instance to host Joomla and manage HTTP requests.</li><li><strong>Database Tier:</strong> Utilizes Amazon RDS for MySQL data management.</li></ul><h4><strong>Benefits:</strong></h4><ul><li><strong>Scalability: </strong>Independent scaling for web and database tiers.</li><li><strong>Security:</strong> Isolated database enhances security.</li><li><stron"
+    },
+    {
+      "id": "medium-96df7b052734",
+      "title": "Automating AWS Infrastructure deployment with CloudFormation",
+      "description": "In My Previous article on medium link here I showed how to Build a Scalable and Secure Web server on AWS were I created VPCs, IGW, ALB, Auto Scaling, and EFS using AWS console",
+      "image": "https://cdn-images-1.medium.com/max/1024/1*s8rsw7GFiwB0IfC006DQcA.png",
+      "technologies": [
+        "Cloudformation",
+        "Aws",
+        "AWS",
+        "Apache",
+        "Linux",
+        "EC2"
+      ],
+      "icon": "Cloud",
+      "color": "from-orange-500 to-orange-600",
+      "mediumUrl": "https://joysonfernandes.medium.com/automating-aws-infrastructure-deployment-with-cloudformation-96df7b052734?source=rss-59fe078e2cb4------2",
+      "highlights": [
+        "Implemented cloud-native solutions",
+        "Automated deployment processes",
+        "Enhanced system reliability and performance"
+      ],
+      "type": "medium",
+      "featured": false,
+      "publishedDate": "2024-10-16T22:08:56.000Z",
+      "categories": [
+        "automation",
+        "cloudformation",
+        "auto-scaling-groups",
+        "iac",
+        "aws"
+      ],
+      "content": "<figure><img alt=\"\" src=\"https://cdn-images-1.medium.com/max/1024/1*s8rsw7GFiwB0IfC006DQcA.png\" /></figure><p>In My Previous article on medium link <a href=\"https://joysonfernandes.medium.com/building-a-scalable-and-secure-web-application-on-aws-vpcs-igw-alb-auto-scaling-and-efs-993bc1425ba8\">here</a> I showed how to Build a Scalable and Secure Web server on AWS were I created VPCs, IGW, ALB, Auto Scaling, and EFS using AWS console. In this acritical I will go over how to create similar environment using CloudFormation. So we can truly know the power of <strong>Infrastructure as Code</strong> (IaC). Will start from foundational, advanced, and complex tasks as outlined below.</p><h3>Scenario:</h3><p>Aurora Digital, an expanding online retailer specializing in luxury home goods, has decided to transition its digital operations to AWS to leverage cloud computing’s benefits. The company is experiencing significant growth and needs a solution that can handle increasing traffic and scale dur"
+    }
+  ],
+  "manualProjects": [
+    {
+      "id": "aws-infrastructure",
+      "title": "Multi-Tier AWS Infrastructure",
+      "description": "Designed and implemented a scalable 3-tier architecture on AWS using Terraform, featuring auto-scaling EC2 instances, RDS databases, and CloudFront CDN distribution.",
+      "image": "https://cdn.abacus.ai/images/6c94cb99-0c5e-4d58-919e-07310dd71f6f.png",
+      "technologies": [
+        "AWS",
+        "Terraform",
+        "EC2",
+        "RDS",
+        "CloudFront",
+        "VPC"
+      ],
+      "icon": "Cloud",
+      "color": "from-orange-500 to-orange-600",
+      "github": "https://github.com/joysonfernandes",
+      "demo": "#",
+      "highlights": [
+        "Reduced deployment time by 75%",
+        "Implemented auto-scaling for 99.9% uptime",
+        "Cost optimization reduced AWS bill by 40%"
+      ],
+      "type": "manual",
+      "featured": true,
+      "publishedDate": "2024-01-15T00:00:00.000Z"
+    },
+    {
+      "id": "azure-cicd",
+      "title": "Azure CI/CD Pipeline",
+      "description": "Built comprehensive CI/CD pipeline using Azure DevOps, integrating automated testing, containerization with Docker, and deployment to Azure Kubernetes Service.",
+      "image": "https://cdn.abacus.ai/images/3c88b377-439a-4aef-9022-d1e53a9244dd.png",
+      "technologies": [
+        "Azure DevOps",
+        "Docker",
+        "AKS",
+        "ARM Templates",
+        "Azure Monitor"
+      ],
+      "icon": "Layers",
+      "color": "from-blue-500 to-blue-600",
+      "github": "https://github.com/joysonfernandes",
+      "demo": "#",
+      "highlights": [
+        "Automated testing with 95% code coverage",
+        "Zero-downtime deployments",
+        "Integrated monitoring and alerting"
+      ],
+      "type": "manual",
+      "featured": true,
+      "publishedDate": "2024-02-01T00:00:00.000Z"
+    },
+    {
+      "id": "kubernetes-management",
+      "title": "Kubernetes Cluster Management",
+      "description": "Orchestrated multi-environment Kubernetes clusters with automated scaling, service mesh integration, and comprehensive monitoring using Prometheus and Grafana.",
+      "image": "https://cdn.abacus.ai/images/58835507-a3c3-4251-938e-150ef1626492.png",
+      "technologies": [
+        "Kubernetes",
+        "Helm",
+        "Prometheus",
+        "Grafana",
+        "Istio",
+        "ArgoCD"
+      ],
+      "icon": "Container",
+      "color": "from-blue-500 to-purple-600",
+      "github": "https://github.com/joysonfernandes",
+      "demo": "#",
+      "highlights": [
+        "Managed 50+ microservices",
+        "Implemented service mesh security",
+        "Automated GitOps workflows"
+      ],
+      "type": "manual",
+      "featured": true,
+      "publishedDate": "2024-03-01T00:00:00.000Z"
+    },
+    {
+      "id": "docker-microservices",
+      "title": "Microservices Docker Platform",
+      "description": "Containerized legacy monolithic application into microservices architecture using Docker, implementing service discovery, load balancing, and health monitoring.",
+      "image": "https://cdn.abacus.ai/images/83709430-d67d-4e75-bc7b-5f9a15b7fb6e.png",
+      "technologies": [
+        "Docker",
+        "Docker Compose",
+        "NGINX",
+        "Redis",
+        "PostgreSQL",
+        "Traefik"
+      ],
+      "icon": "Cpu",
+      "color": "from-blue-600 to-cyan-600",
+      "github": "https://github.com/joysonfernandes",
+      "demo": "#",
+      "highlights": [
+        "Improved scalability by 300%",
+        "Reduced resource usage by 50%",
+        "Enhanced deployment flexibility"
+      ],
+      "type": "manual",
+      "featured": true,
+      "publishedDate": "2024-04-01T00:00:00.000Z"
+    }
+  ],
+  "combinedProjects": []
+}
