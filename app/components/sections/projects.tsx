@@ -10,24 +10,24 @@ import { useProjects } from '@/hooks/useProjects'
 
 const HOMELAB_PROJECTS = [
   {
-    title: 'Linkvolt',
+    title: 'LinkVolt',
     description:
-      'Link-in-bio platform built with 7 Go microservices using CQRS pattern and NATS JetStream for event-driven communication.',
-    technologies: ['Go', 'NATS', 'PostgreSQL', 'Redis', 'React', 'Kubernetes', 'ArgoCD'],
+      'URL shortener & link page SaaS — 6 Go microservices (CQRS) on a self-managed 4-node HA K8s cluster. Full GitOps via ArgoCD App-of-Apps, Gitea Actions CI/CD, Cilium CNI, Sealed Secrets, and hybrid failover to Fly.io.',
+    technologies: ['Go', 'Kubernetes', 'ArgoCD', 'Cilium', 'PostgreSQL', 'SQS', 'Prometheus'],
     github: 'https://github.com/joyson-fernandes',
   },
   {
-    title: 'Weather App',
+    title: 'Homelab Platform',
     description:
-      'Go weather API deployed via full GitOps pipeline — GitHub Actions builds the image, Trivy scans it, ArgoCD deploys to K8s.',
-    technologies: ['Go', 'Docker', 'GitHub Actions', 'ArgoCD', 'Kubernetes'],
+      'Production-grade 4-node HA Kubernetes cluster on VMware ESXi/vCenter. ArgoCD GitOps, Cilium CNI, kube-vip, Prometheus/Grafana/Loki observability, and hands-on exploration of Backstage, Crossplane, and Karpenter.',
+    technologies: ['Kubernetes', 'ArgoCD', 'Cilium', 'Prometheus', 'Grafana', 'VMware'],
     github: 'https://github.com/joyson-fernandes',
   },
   {
     title: 'Portfolio v2',
     description:
-      'This site — Next.js on a 6-node K8s cluster. Credly & Medium integrations, interactive infrastructure diagram, standalone Docker build.',
-    technologies: ['Next.js', 'TypeScript', 'Tailwind', 'React Flow', 'Kubernetes'],
+      'This site — Next.js on K8s with interactive React Flow infrastructure diagram, Credly & Medium integrations, GitHub Actions CI/CD with PR preview deployments.',
+    technologies: ['Next.js', 'TypeScript', 'React Flow', 'GitHub Actions', 'Kubernetes'],
     github: 'https://github.com/joyson-fernandes/portfolio-website-v2',
   },
 ]

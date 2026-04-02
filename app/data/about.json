@@ -3,9 +3,9 @@
   "subtitle": "Platform & DevOps Engineer specialising in Kubernetes, cloud security, and AI-driven infrastructure automation.",
   "mainTitle": "Engineering Platforms That Scale",
   "paragraphs": [
-    "I'm a Platform and DevOps Engineer focused on building secure, automated infrastructure at scale. My core expertise spans Kubernetes orchestration and security, Infrastructure as Code with Terraform, and cloud platforms — primarily AWS and Azure.",
-    "I design and operate internal developer platforms, CI/CD pipelines with GitHub Actions, and GitOps workflows with ArgoCD. I run a production-grade 6-node Kubernetes homelab with full observability, policy enforcement, and secrets management — the same patterns I apply to enterprise environments.",
-    "I'm increasingly leveraging AI to accelerate infrastructure automation — from intelligent alerting and anomaly detection to AI-assisted IaC generation and deployment workflows. I believe the intersection of platform engineering and AI is where the most impactful DevOps work is happening."
+    "Platform, DevOps, and Cloud Engineer with CNCF Kubestronaut status (CKA, CKAD, CKS, KCNA, KCSA) and AWS Community Builder. I specialise in designing and operating production Kubernetes platforms on AKS, EKS, and self-managed clusters — with a strong focus on security, GitOps, and developer experience.",
+    "I build CI/CD pipelines with GitHub Actions, GitOps workflows with ArgoCD, and Infrastructure as Code with Terraform across AWS and Azure. My approach centres on self-service infrastructure, policy-as-code guardrails, and eliminating toil so engineering teams ship reliably and fast.",
+    "I'm increasingly leveraging AI to accelerate infrastructure automation — from AI-assisted IaC generation to intelligent monitoring and automated incident response. Active in the cloud-native community through technical blogging on Medium and mentoring early-career cloud engineers."
   ],
   "stats": [
     {

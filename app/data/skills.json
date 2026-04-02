@@ -1,34 +1,44 @@
 {
   "categories": [
     {
-      "title": "Kubernetes & Security",
+      "title": "Kubernetes & Cloud Native",
       "icon": "boxes",
-      "skills": ["Kubernetes", "Cilium", "Kyverno", "OPA/Gatekeeper", "Falco", "Network Policies", "RBAC", "Pod Security", "MetalLB", "kube-vip"]
-    },
-    {
-      "title": "Infrastructure as Code",
-      "icon": "file-code",
-      "skills": ["Terraform", "CloudFormation", "Ansible", "Helm", "Kustomize", "Pulumi", "HCL"]
-    },
-    {
-      "title": "Cloud — AWS & Azure",
-      "icon": "cloud",
-      "skills": ["AWS", "Azure", "EC2", "EKS", "AKS", "S3", "IAM", "VPC", "Lambda", "Azure DevOps"]
+      "skills": ["EKS", "AKS", "kubeadm", "Helm", "ArgoCD", "Cilium", "OPA/Gatekeeper", "Pod Security", "Karpenter", "kube-vip", "Sealed Secrets", "External Secrets"]
     },
     {
       "title": "CI/CD & GitOps",
       "icon": "git-branch",
-      "skills": ["GitHub Actions", "ArgoCD", "Harbor", "Trivy", "Docker", "Buildkit", "Self-hosted Runners"]
+      "skills": ["GitHub Actions", "OIDC Auth", "Reusable Workflows", "Matrix Builds", "ArgoCD", "Azure DevOps", "GitLab CI", "Multi-env Promotion"]
     },
     {
-      "title": "Observability & Platform",
+      "title": "AWS",
+      "icon": "cloud",
+      "skills": ["EKS", "EC2", "RDS/Aurora", "S3", "IAM", "IRSA", "SES", "SQS", "CloudWatch", "Secrets Manager", "ECR", "VPC", "Route 53", "Lambda"]
+    },
+    {
+      "title": "Azure",
+      "icon": "cloud",
+      "skills": ["AKS", "App Service", "Azure Monitor", "Defender for Cloud", "Azure Arc", "Entra ID", "Intune", "Key Vault", "Bicep", "ARM", "Cost Management"]
+    },
+    {
+      "title": "IaC & Config Management",
+      "icon": "file-code",
+      "skills": ["Terraform", "Bicep", "CloudFormation", "Ansible", "PowerShell DSC", "Helm", "Kustomize"]
+    },
+    {
+      "title": "Observability",
       "icon": "activity",
-      "skills": ["Prometheus", "Grafana", "Loki", "Tempo", "Vault", "External Secrets", "Velero", "Longhorn"]
+      "skills": ["Prometheus", "Grafana", "Loki", "OpenTelemetry", "Jaeger", "CloudWatch", "Azure Monitor", "ELK", "SLO Dashboards"]
     },
     {
-      "title": "AI & Programming",
+      "title": "Security & Compliance",
+      "icon": "shield",
+      "skills": ["CIS Benchmarks", "kube-bench", "Zero Trust", "RBAC", "NetworkPolicy", "OPA/Gatekeeper", "IAM Least-Privilege", "DevSecOps", "Trivy", "GDPR"]
+    },
+    {
+      "title": "Scripting & AI",
       "icon": "code",
-      "skills": ["Go", "Python", "TypeScript", "Bash", "Claude API", "LLM Ops", "AI-assisted IaC", "Prompt Engineering"]
+      "skills": ["Go", "Python", "Bash", "PowerShell", "TypeScript", "AI-assisted IaC", "Claude API", "LLM Ops"]
     }
   ]
 }

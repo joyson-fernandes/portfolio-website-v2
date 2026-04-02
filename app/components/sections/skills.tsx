@@ -1,7 +1,7 @@
 'use client'
 
 import {
-  Cloud, FileCode, Boxes, GitBranch, Code, Activity,
+  Cloud, FileCode, Boxes, GitBranch, Code, Activity, Shield,
 } from 'lucide-react'
 import SectionWrapper from '@/components/layout/section-wrapper'
 import SectionHeading from '@/components/shared/section-heading'
@@ -16,6 +16,7 @@ const ICON_MAP: Record<string, React.ElementType> = {
   'git-branch': GitBranch,
   code: Code,
   activity: Activity,
+  shield: Shield,
 }
 
 export default function Skills() {
