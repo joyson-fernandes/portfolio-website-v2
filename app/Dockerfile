@@ -1,5 +1,5 @@
 # Use the official Node.js 18 image as base
-FROM node:18-alpine AS base
+FROM node:20-alpine AS base
 
 # Install dependencies only when needed
 FROM base AS deps
@@ -9,14 +9,7 @@ WORKDIR /app
 
 # Install dependencies based on the preferred package manager
 COPY package.json package-lock.json* ./
-COPY prisma ./prisma/
-ENV PRISMA_ENGINES_MIRROR=https://binaries.prisma.sh
-RUN npm config set fetch-retries 5 && \
-    npm config set fetch-retry-mintimeout 30000 && \
-    npm config set fetch-retry-maxtimeout 300000 && \
-    npm ci --legacy-peer-deps || \
-    (sleep 10 && npm ci --legacy-peer-deps) || \
-    (sleep 30 && npm ci --legacy-peer-deps)
+RUN npm ci --legacy-peer-deps
 
 # Rebuild the source code only when needed
 FROM base AS builder
