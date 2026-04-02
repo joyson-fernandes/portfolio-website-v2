@@ -23,7 +23,8 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED 1
 
 # Build the application
-RUN npm run build
+ENV NEXT_OUTPUT_MODE standalone
+RUN npm run build && ls -la .next/standalone/
 
 # Production image, copy all the files and run next
 FROM base AS runner
