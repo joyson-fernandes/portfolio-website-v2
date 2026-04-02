@@ -24,7 +24,7 @@ ENV NEXT_TELEMETRY_DISABLED 1
 
 # Build the application
 ENV NEXT_OUTPUT_MODE standalone
-RUN npm run build && ls -la .next/standalone/
+RUN npm run build
 
 # Production image, copy all the files and run next
 FROM base AS runner
@@ -57,4 +57,4 @@ ENV HOSTNAME "0.0.0.0"
 
 # server.js is created by next build from the standalone output
 # https://nextjs.org/docs/pages/api-reference/next-config-js/output
-CMD ["node", "server.js"]
+CMD ["node", "app/server.js"]
