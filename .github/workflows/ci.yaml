@@ -21,7 +21,12 @@ jobs:
           TAG=$(git rev-parse --short HEAD)
           REGISTRY="${{ secrets.HARBOR_REGISTRY }}/library"
 
-          docker build -t $REGISTRY/portfolio-app:$TAG -t $REGISTRY/portfolio-app:latest ./app
+          # Build with retry (npm can ECONNRESET on large installs)
+          for attempt in 1 2 3; do
+            docker build --network=host -t $REGISTRY/portfolio-app:$TAG -t $REGISTRY/portfolio-app:latest ./app && break
+            echo "Build failed (attempt $attempt/3), retrying..."
+            sleep 5
+          done
 
           # Scan
           if command -v trivy &> /dev/null; then
