@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-deploy:
+    runs-on: self-hosted
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to Harbor
+        run: echo "${{ secrets.HARBOR_PASSWORD }}" | docker login ${{ secrets.HARBOR_REGISTRY }} -u "${{ secrets.HARBOR_USERNAME }}" --password-stdin
+
+      - name: Build and push
+        run: |
+          TAG=$(git rev-parse --short HEAD)
+          REGISTRY="${{ secrets.HARBOR_REGISTRY }}/library"
+
+          docker build -t $REGISTRY/portfolio-app:$TAG -t $REGISTRY/portfolio-app:latest ./app
+
+          # Scan
+          if command -v trivy &> /dev/null; then
+            trivy image --exit-code 1 --severity CRITICAL,HIGH --no-progress $REGISTRY/portfolio-app:$TAG || true
+          fi
+
+          docker push $REGISTRY/portfolio-app:$TAG
+          docker push $REGISTRY/portfolio-app:latest
+          echo "IMAGE_TAG=$TAG" >> $GITHUB_ENV
+
+      - name: Deploy to Kubernetes
+        run: |
+          export PATH=$PATH:/usr/local/bin
+          sed -i "s|image: registry.joysontech.com/library/portfolio-app:.*|image: registry.joysontech.com/library/portfolio-app:$IMAGE_TAG|" k8s/deployment.yaml
+          kubectl apply -f k8s/deployment.yaml
+          kubectl rollout status deployment/portfolio-app -n portfolio --timeout=120s
+          echo "Deployed portfolio-app:$IMAGE_TAG"
