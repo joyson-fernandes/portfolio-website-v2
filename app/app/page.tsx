@@ -1,36 +1,25 @@
-
-import Navigation from '@/components/navigation'
-import Hero from '@/components/hero'
-import About from '@/components/about'
-import Skills from '@/components/skills'
-import Projects from '@/components/projects'
-import Experience from '@/components/experience'
-import Certifications from '@/components/certifications'
-import Footer from '@/components/footer'
-import CertificationsAdmin from '@/components/certifications-admin'
-import ExperienceAdmin from '@/components/experience-admin'
-import ProjectsAdmin from '@/components/projects-admin'
-import AboutAdmin from '@/components/about-admin'
-import AdminWrapper from '@/components/admin-wrapper'
+import Navigation from '@/components/layout/navigation'
+import Hero from '@/components/sections/hero'
+import About from '@/components/sections/about'
+import Infrastructure from '@/components/sections/infrastructure'
+import Skills from '@/components/sections/skills'
+import Projects from '@/components/sections/projects'
+import Experience from '@/components/sections/experience'
+import Certifications from '@/components/sections/certifications'
+import Footer from '@/components/sections/footer'
 
 export default function Home() {
   return (
-    <main className="relative">
+    <main className="min-h-screen">
       <Navigation />
       <Hero />
       <About />
+      <Infrastructure />
       <Skills />
       <Projects />
       <Experience />
       <Certifications />
       <Footer />
-      
-      <AdminWrapper showInDevelopment={false}>
-        <AboutAdmin />
-        <CertificationsAdmin />
-        <ExperienceAdmin />
-        <ProjectsAdmin />
-      </AdminWrapper>
     </main>
   )
 }

@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     revalidateTag('certifications')
     
     // Also trigger a fresh fetch by calling our main API
-    const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
     await fetch(`${baseUrl}/api/certifications`, {
       next: { revalidate: 0 }
     })

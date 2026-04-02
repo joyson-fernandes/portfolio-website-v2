@@ -1,0 +1,242 @@
+{
+  "categories": {
+    "virtualization": { "color": "#ef4444", "label": "Virtualization" },
+    "platform": { "color": "#3b82f6", "label": "Platform" },
+    "security": { "color": "#8b5cf6", "label": "Security" },
+    "observability": { "color": "#22c55e", "label": "Observability" },
+    "storage": { "color": "#eab308", "label": "Storage & Backup" },
+    "cicd": { "color": "#f97316", "label": "CI/CD" },
+    "application": { "color": "#06b6d4", "label": "Applications" },
+    "networking": { "color": "#ec4899", "label": "Networking" }
+  },
+  "nodes": [
+    {
+      "id": "esxi",
+      "label": "VMware ESXi",
+      "subtitle": "6 VMs — 3 CP + 3 Workers",
+      "category": "virtualization",
+      "icon": "server",
+      "position": { "x": 400, "y": 0 }
+    },
+    {
+      "id": "k8s",
+      "label": "Kubernetes v1.31",
+      "subtitle": "6-Node HA Cluster",
+      "category": "platform",
+      "icon": "boxes",
+      "position": { "x": 400, "y": 120 }
+    },
+    {
+      "id": "kube-vip",
+      "label": "kube-vip",
+      "subtitle": "HA VIP 10.0.1.20",
+      "category": "networking",
+      "icon": "network",
+      "position": { "x": 150, "y": 120 }
+    },
+    {
+      "id": "cilium",
+      "label": "Cilium CNI",
+      "subtitle": "eBPF Networking",
+      "category": "networking",
+      "icon": "cable",
+      "position": { "x": 650, "y": 120 }
+    },
+    {
+      "id": "metallb",
+      "label": "MetalLB",
+      "subtitle": "LoadBalancer Services",
+      "category": "networking",
+      "icon": "globe",
+      "position": { "x": 900, "y": 120 }
+    },
+    {
+      "id": "argocd",
+      "label": "ArgoCD",
+      "subtitle": "GitOps — 22 Apps Synced",
+      "category": "cicd",
+      "icon": "git-branch",
+      "position": { "x": 100, "y": 260 }
+    },
+    {
+      "id": "harbor",
+      "label": "Harbor Registry",
+      "subtitle": "Trivy Image Scanning",
+      "category": "cicd",
+      "icon": "container",
+      "position": { "x": 350, "y": 260 }
+    },
+    {
+      "id": "vault",
+      "label": "HashiCorp Vault",
+      "subtitle": "HA — 3-Replica Raft",
+      "category": "security",
+      "icon": "lock",
+      "position": { "x": 600, "y": 260 }
+    },
+    {
+      "id": "eso",
+      "label": "External Secrets",
+      "subtitle": "Vault → K8s Secrets",
+      "category": "security",
+      "icon": "key",
+      "position": { "x": 850, "y": 260 }
+    },
+    {
+      "id": "kyverno",
+      "label": "Kyverno",
+      "subtitle": "Policy Engine",
+      "category": "security",
+      "icon": "shield",
+      "position": { "x": 1100, "y": 260 }
+    },
+    {
+      "id": "prometheus",
+      "label": "Prometheus",
+      "subtitle": "Metrics Collection",
+      "category": "observability",
+      "icon": "activity",
+      "position": { "x": 100, "y": 400 }
+    },
+    {
+      "id": "grafana",
+      "label": "Grafana",
+      "subtitle": "Dashboards & Alerts",
+      "category": "observability",
+      "icon": "bar-chart-3",
+      "position": { "x": 350, "y": 400 }
+    },
+    {
+      "id": "loki",
+      "label": "Loki",
+      "subtitle": "Log Aggregation",
+      "category": "observability",
+      "icon": "file-text",
+      "position": { "x": 600, "y": 400 }
+    },
+    {
+      "id": "tempo",
+      "label": "Grafana Tempo",
+      "subtitle": "Distributed Tracing",
+      "category": "observability",
+      "icon": "zap",
+      "position": { "x": 850, "y": 400 }
+    },
+    {
+      "id": "longhorn",
+      "label": "Longhorn",
+      "subtitle": "Distributed Block Storage",
+      "category": "storage",
+      "icon": "hard-drive",
+      "position": { "x": 100, "y": 540 }
+    },
+    {
+      "id": "truenas",
+      "label": "TrueNAS + MinIO",
+      "subtitle": "Backup S3 Storage",
+      "category": "storage",
+      "icon": "database",
+      "position": { "x": 350, "y": 540 }
+    },
+    {
+      "id": "velero",
+      "label": "Velero",
+      "subtitle": "Daily Backup — 30d Retention",
+      "category": "storage",
+      "icon": "archive",
+      "position": { "x": 600, "y": 540 }
+    },
+    {
+      "id": "pgbackrest",
+      "label": "pgBackRest",
+      "subtitle": "PITR — <5 min RPO",
+      "category": "storage",
+      "icon": "refresh-cw",
+      "position": { "x": 850, "y": 540 }
+    },
+    {
+      "id": "linkvolt",
+      "label": "Linkvolt",
+      "subtitle": "7 Go Microservices",
+      "category": "application",
+      "icon": "link",
+      "position": { "x": 200, "y": 680 }
+    },
+    {
+      "id": "weather",
+      "label": "Weather App",
+      "subtitle": "Go + GitOps Deploy",
+      "category": "application",
+      "icon": "cloud-sun",
+      "position": { "x": 500, "y": 680 }
+    },
+    {
+      "id": "portfolio",
+      "label": "Portfolio",
+      "subtitle": "This Site — Next.js",
+      "category": "application",
+      "icon": "layout",
+      "position": { "x": 800, "y": 680 }
+    },
+    {
+      "id": "github",
+      "label": "GitHub",
+      "subtitle": "Source Control",
+      "category": "cicd",
+      "icon": "github",
+      "position": { "x": -200, "y": 260 }
+    },
+    {
+      "id": "gha",
+      "label": "GitHub Actions",
+      "subtitle": "CI — Self-hosted Runner",
+      "category": "cicd",
+      "icon": "play",
+      "position": { "x": -200, "y": 400 }
+    },
+    {
+      "id": "npm",
+      "label": "Nginx Proxy Manager",
+      "subtitle": "SSL / Reverse Proxy",
+      "category": "networking",
+      "icon": "shield-check",
+      "position": { "x": 1100, "y": 120 }
+    },
+    {
+      "id": "authentik",
+      "label": "Authentik",
+      "subtitle": "Identity Provider",
+      "category": "security",
+      "icon": "user-check",
+      "position": { "x": 1100, "y": 400 }
+    }
+  ],
+  "edges": [
+    { "id": "e-esxi-k8s", "source": "esxi", "target": "k8s", "animated": true },
+    { "id": "e-k8s-kvip", "source": "k8s", "target": "kube-vip" },
+    { "id": "e-k8s-cilium", "source": "k8s", "target": "cilium" },
+    { "id": "e-k8s-metallb", "source": "k8s", "target": "metallb" },
+    { "id": "e-k8s-argocd", "source": "k8s", "target": "argocd", "animated": true },
+    { "id": "e-k8s-harbor", "source": "k8s", "target": "harbor" },
+    { "id": "e-k8s-vault", "source": "k8s", "target": "vault" },
+    { "id": "e-vault-eso", "source": "vault", "target": "eso", "animated": true },
+    { "id": "e-k8s-kyverno", "source": "k8s", "target": "kyverno" },
+    { "id": "e-k8s-prom", "source": "k8s", "target": "prometheus" },
+    { "id": "e-prom-grafana", "source": "prometheus", "target": "grafana", "animated": true },
+    { "id": "e-k8s-loki", "source": "k8s", "target": "loki" },
+    { "id": "e-k8s-tempo", "source": "k8s", "target": "tempo" },
+    { "id": "e-k8s-longhorn", "source": "k8s", "target": "longhorn" },
+    { "id": "e-longhorn-truenas", "source": "longhorn", "target": "truenas" },
+    { "id": "e-velero-truenas", "source": "velero", "target": "truenas", "animated": true },
+    { "id": "e-k8s-velero", "source": "k8s", "target": "velero" },
+    { "id": "e-argocd-linkvolt", "source": "argocd", "target": "linkvolt", "animated": true },
+    { "id": "e-argocd-weather", "source": "argocd", "target": "weather", "animated": true },
+    { "id": "e-argocd-portfolio", "source": "argocd", "target": "portfolio", "animated": true },
+    { "id": "e-github-gha", "source": "github", "target": "gha", "animated": true },
+    { "id": "e-gha-harbor", "source": "gha", "target": "harbor", "animated": true },
+    { "id": "e-harbor-argocd", "source": "harbor", "target": "argocd" },
+    { "id": "e-metallb-npm", "source": "metallb", "target": "npm" },
+    { "id": "e-k8s-authentik", "source": "k8s", "target": "authentik" },
+    { "id": "e-k8s-pgbackrest", "source": "k8s", "target": "pgbackrest" }
+  ]
+}
