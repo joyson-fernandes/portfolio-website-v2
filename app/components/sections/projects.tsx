@@ -1,6 +1,7 @@
 'use client'
 
-import { ExternalLink, Github, BookOpen } from 'lucide-react'
+import { ExternalLink, Github, BookOpen, Star, Calendar } from 'lucide-react'
+import { format } from 'date-fns'
 import SectionWrapper from '@/components/layout/section-wrapper'
 import SectionHeading from '@/components/shared/section-heading'
 import TechBadge from '@/components/shared/tech-badge'
@@ -117,15 +118,29 @@ export default function Projects() {
                 >
                   <div className="h-full rounded-xl border border-border bg-card p-6 transition-all hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5">
                     <div className="flex items-start justify-between mb-3">
-                      <BookOpen className="h-4 w-4 text-muted-foreground" />
+                      <div className="flex items-center gap-2">
+                        <BookOpen className="h-4 w-4 text-muted-foreground" />
+                        {i < 2 && (
+                          <span className="flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-medium rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20">
+                            <Star className="h-2.5 w-2.5" />
+                            Featured
+                          </span>
+                        )}
+                      </div>
                       <ExternalLink className="h-3.5 w-3.5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
                     <h4 className="font-semibold text-foreground mb-2 line-clamp-2 group-hover:text-primary transition-colors">
                       {article.title}
                     </h4>
-                    <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
+                    <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
                       {article.description}
                     </p>
+                    {article.publishedDate && (
+                      <div className="flex items-center gap-1 text-[10px] text-muted-foreground mb-3">
+                        <Calendar className="h-2.5 w-2.5" />
+                        {format(new Date(article.publishedDate), 'MMM d, yyyy')}
+                      </div>
+                    )}
                     <div className="flex flex-wrap gap-1.5">
                       {article.technologies.slice(0, 4).map((t) => (
                         <TechBadge key={t} name={t} />
@@ -140,6 +155,21 @@ export default function Projects() {
           <p className="text-muted-foreground text-center py-8">
             Articles loading from Medium...
           </p>
+        )}
+
+        {/* Medium CTA */}
+        {articles.length > 0 && (
+          <div className="text-center mt-8">
+            <a
+              href="https://medium.com/@joysonfernandes"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-full border border-border text-muted-foreground hover:text-foreground hover:border-primary/50 transition-all"
+            >
+              Read more on Medium
+              <ExternalLink className="h-3.5 w-3.5" />
+            </a>
+          </div>
         )}
       </div>
     </SectionWrapper>
