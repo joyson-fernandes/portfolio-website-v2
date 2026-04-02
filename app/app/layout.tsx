@@ -5,26 +5,30 @@ import './globals.css'
 import { ThemeProvider } from '@/components/shared/theme-provider'
 
 export const metadata: Metadata = {
-  title: 'Joyson Fernandes — Cloud DevOps Engineer',
+  title: 'Joyson Fernandes — Platform & DevOps Engineer',
   description:
-    'Cloud DevOps Engineer building production-grade infrastructure. Kubernetes, GitOps, observability, and infrastructure automation on a 6-node homelab cluster.',
+    'Platform Engineer and DevOps specialist focused on Kubernetes, K8s security, IaC with Terraform, cloud automation on AWS & Azure, GitHub Actions CI/CD, and AI-driven infrastructure.',
   keywords: [
-    'Cloud DevOps Engineer',
+    'Platform Engineer',
+    'DevOps Engineer',
     'Kubernetes',
+    'Kubernetes Security',
+    'Terraform',
+    'AWS',
+    'Azure',
+    'GitHub Actions',
+    'Infrastructure as Code',
+    'AI Automation',
     'GitOps',
     'ArgoCD',
-    'Terraform',
-    'Docker',
-    'Infrastructure Automation',
-    'Homelab',
   ],
   authors: [{ name: 'Joyson Fernandes' }],
   robots: 'index, follow',
   icons: { icon: '/favicon.png' },
   openGraph: {
-    title: 'Joyson Fernandes — Cloud DevOps Engineer',
+    title: 'Joyson Fernandes — Platform & DevOps Engineer',
     description:
-      'Production-grade homelab infrastructure. Kubernetes, GitOps, observability, and more.',
+      'Platform engineering, Kubernetes security, Terraform IaC, and AI-driven automation on AWS & Azure.',
     type: 'website',
     locale: 'en_US',
   },

@@ -23,7 +23,7 @@ export default function Footer() {
             Joyson Fernandes
           </h3>
           <p className="text-sm text-muted-foreground mb-6">
-            Cloud DevOps Engineer
+            Platform & DevOps Engineer
           </p>
 
           {/* Social links */}

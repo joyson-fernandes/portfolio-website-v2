@@ -1,11 +1,11 @@
 {
   "sectionTitle": "About Me",
-  "subtitle": "A dedicated Cloud DevOps Engineer with a passion for building robust, scalable infrastructure solutions and automating complex workflows.",
-  "mainTitle": "Transforming Ideas into Infrastructure",
+  "subtitle": "Platform & DevOps Engineer specialising in Kubernetes, cloud security, and AI-driven infrastructure automation.",
+  "mainTitle": "Engineering Platforms That Scale",
   "paragraphs": [
-    "As a Cloud DevOps Engineer and Infrastructure Support Analyst, I specialize in creating seamless, automated cloud solutions that drive business growth and operational efficiency. My journey spans multiple cloud platforms, with deep expertise in AWS and Azure ecosystems.",
-    "I graduated from the comprehensive 40-week Level Up In Tech program, where I mastered modern cloud technologies and DevOps practices. Currently, I balance my role as Infrastructure Support Analyst at Airinmar with part-time Cloud DevOps engineering at Level Up In Tech, continuously expanding my expertise.",
-    "My approach combines technical excellence with collaborative problem-solving, focusing on Infrastructure as Code, containerization, and continuous integration/deployment pipelines. I'm passionate about automation, cloud architecture, and staying at the forefront of emerging technologies."
+    "I'm a Platform and DevOps Engineer focused on building secure, automated infrastructure at scale. My core expertise spans Kubernetes orchestration and security, Infrastructure as Code with Terraform, and cloud platforms — primarily AWS and Azure.",
+    "I design and operate internal developer platforms, CI/CD pipelines with GitHub Actions, and GitOps workflows with ArgoCD. I run a production-grade 6-node Kubernetes homelab with full observability, policy enforcement, and secrets management — the same patterns I apply to enterprise environments.",
+    "I'm increasingly leveraging AI to accelerate infrastructure automation — from intelligent alerting and anomaly detection to AI-assisted IaC generation and deployment workflows. I believe the intersection of platform engineering and AI is where the most impactful DevOps work is happening."
   ],
   "stats": [
     {
@@ -27,28 +27,28 @@
   ],
   "highlights": [
     {
-      "title": "Cloud Architecture",
-      "description": "Expert in AWS, Azure, and GCP cloud platforms with focus on scalable solutions."
+      "title": "Kubernetes & Security",
+      "description": "Production K8s clusters with Kyverno policies, Vault secrets, network policies, and RBAC hardening."
     },
     {
       "title": "Infrastructure as Code",
-      "description": "Proficient in Terraform, CloudFormation, and Ansible for automation."
+      "description": "Terraform, CloudFormation, and Ansible — everything defined, versioned, and automated."
     },
     {
-      "title": "DevOps Excellence",
-      "description": "CI/CD pipelines, containerization, and modern deployment strategies."
+      "title": "Platform Engineering",
+      "description": "Internal developer platforms with self-service namespaces, GitOps, and policy-as-code guardrails."
     },
     {
-      "title": "Team Collaboration",
-      "description": "Strong communication skills and experience in cross-functional teams."
+      "title": "CI/CD & GitHub Actions",
+      "description": "End-to-end pipelines with GitHub Actions, Trivy scanning, Harbor registry, and ArgoCD deployments."
     },
     {
-      "title": "11+ Certifications",
-      "description": "AWS, Azure, HashiCorp, and Microsoft certified professional."
+      "title": "Cloud — AWS & Azure",
+      "description": "Multi-cloud architecture across AWS and Azure with cost optimisation and security best practices."
     },
     {
-      "title": "Problem Solver",
-      "description": "Passionate about solving complex infrastructure challenges efficiently."
+      "title": "AI & Automation",
+      "description": "Leveraging AI for intelligent monitoring, IaC generation, and automated incident response."
     }
   ]
 }

@@ -9,6 +9,9 @@ import {
   Activity,
   Server,
   Award,
+  Bot,
+  Boxes,
+  Workflow,
 } from 'lucide-react'
 import SectionWrapper from '@/components/layout/section-wrapper'
 import SectionHeading from '@/components/shared/section-heading'
@@ -26,12 +29,12 @@ interface AboutData {
 }
 
 const HIGHLIGHT_ICONS: Record<string, React.ElementType> = {
-  'Cloud Architecture': Cloud,
+  'Kubernetes & Security': Shield,
   'Infrastructure as Code': GitBranch,
-  'DevOps Excellence': Activity,
-  'Team Collaboration': Server,
-  '11+ Certifications': Award,
-  'Problem Solver': Shield,
+  'Platform Engineering': Boxes,
+  'CI/CD & GitHub Actions': Workflow,
+  'Cloud — AWS & Azure': Cloud,
+  'AI & Automation': Bot,
 }
 
 const STATS = [

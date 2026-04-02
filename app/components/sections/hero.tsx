@@ -10,10 +10,11 @@ import { ShimmerButton, OutlineButton } from '@/components/ui/magic/shimmer-butt
 import { Particles } from '@/components/ui/magic/particles'
 
 const ROLES = [
-  'Cloud DevOps Engineer',
-  'Infrastructure Architect',
-  'Kubernetes Enthusiast',
-  'GitOps Practitioner',
+  'Platform Engineer',
+  'DevOps Engineer',
+  'Kubernetes Security Specialist',
+  'Cloud & IaC Architect',
+  'AI-Driven Automation',
 ]
 
 export default function Hero() {
@@ -103,9 +104,9 @@ export default function Hero() {
           transition={{ duration: 0.5, delay: 1.5 }}
           className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed"
         >
-          Building production-grade infrastructure on a 6-node Kubernetes cluster.
+          Platform engineering, Kubernetes security, and AI-driven automation.
           <br className="hidden sm:block" />
-          GitOps, observability, and automation — from homelab to production.
+          Building secure, scalable infrastructure on AWS, Azure, and bare-metal K8s.
         </motion.p>
 
         {/* CTA Buttons */}
