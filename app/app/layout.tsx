@@ -1,26 +1,30 @@
-
 import type { Metadata, Viewport } from 'next'
-import { Inter } from 'next/font/google'
+import { GeistSans } from 'geist/font/sans'
+import { GeistMono } from 'geist/font/mono'
 import './globals.css'
-import { AdminProvider } from '@/contexts/AdminContext'
-import { ThemeProvider } from '@/components/theme-provider'
-import AdminToggle from '@/components/admin-toggle'
-import ProfilePictureAdmin from '@/components/profile-picture-admin'
-
-const inter = Inter({ subsets: ['latin'] })
+import { ThemeProvider } from '@/components/shared/theme-provider'
 
 export const metadata: Metadata = {
-  title: 'Joyson Fernandes - Cloud DevOps Engineer',
-  description: 'Professional portfolio of Joyson Fernandes, Cloud DevOps Engineer specializing in AWS, Azure, Terraform, Docker, and Kubernetes. Infrastructure automation and cloud architecture expert.',
-  keywords: ['Cloud DevOps Engineer', 'AWS', 'Azure', 'Terraform', 'Docker', 'Kubernetes', 'Infrastructure Automation', 'Cloud Architecture'],
+  title: 'Joyson Fernandes — Cloud DevOps Engineer',
+  description:
+    'Cloud DevOps Engineer building production-grade infrastructure. Kubernetes, GitOps, observability, and infrastructure automation on a 6-node homelab cluster.',
+  keywords: [
+    'Cloud DevOps Engineer',
+    'Kubernetes',
+    'GitOps',
+    'ArgoCD',
+    'Terraform',
+    'Docker',
+    'Infrastructure Automation',
+    'Homelab',
+  ],
   authors: [{ name: 'Joyson Fernandes' }],
   robots: 'index, follow',
-  icons: {
-    icon: '/favicon.png',
-  },
+  icons: { icon: '/favicon.png' },
   openGraph: {
-    title: 'Joyson Fernandes - Cloud DevOps Engineer',
-    description: 'Professional portfolio showcasing cloud infrastructure expertise and DevOps solutions.',
+    title: 'Joyson Fernandes — Cloud DevOps Engineer',
+    description:
+      'Production-grade homelab infrastructure. Kubernetes, GitOps, observability, and more.',
     type: 'website',
     locale: 'en_US',
   },
@@ -37,19 +41,19 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
-      <body className={`${inter.className} antialiased`}>
+    <html
+      lang="en"
+      className={`${GeistSans.variable} ${GeistMono.variable} scroll-smooth`}
+      suppressHydrationWarning
+    >
+      <body className="font-sans antialiased">
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
         >
-          <AdminProvider>
-            {children}
-            <AdminToggle />
-            <ProfilePictureAdmin />
-          </AdminProvider>
+          {children}
         </ThemeProvider>
       </body>
     </html>

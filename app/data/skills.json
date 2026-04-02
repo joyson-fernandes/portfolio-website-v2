@@ -1,0 +1,34 @@
+{
+  "categories": [
+    {
+      "title": "Cloud Platforms",
+      "icon": "cloud",
+      "skills": ["AWS", "Azure", "GCP", "VMware ESXi", "vCenter"]
+    },
+    {
+      "title": "IaC & Config Management",
+      "icon": "file-code",
+      "skills": ["Terraform", "Ansible", "CloudFormation", "ARM Templates", "Helm"]
+    },
+    {
+      "title": "Containers & Orchestration",
+      "icon": "boxes",
+      "skills": ["Docker", "Kubernetes", "Cilium", "MetalLB", "Longhorn", "kube-vip"]
+    },
+    {
+      "title": "CI/CD & GitOps",
+      "icon": "git-branch",
+      "skills": ["ArgoCD", "GitHub Actions", "Harbor", "Trivy", "Kyverno"]
+    },
+    {
+      "title": "Programming",
+      "icon": "code",
+      "skills": ["Go", "Python", "TypeScript", "Bash", "YAML", "HCL"]
+    },
+    {
+      "title": "Observability & Security",
+      "icon": "activity",
+      "skills": ["Prometheus", "Grafana", "Loki", "Tempo", "Vault", "Authentik", "Velero"]
+    }
+  ]
+}
