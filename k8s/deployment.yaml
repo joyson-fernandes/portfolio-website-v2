@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
       - name: portfolio-app
-        image: registry.joysontech.com/library/portfolio-app:b2f153f
+        image: registry.joysontech.com/library/portfolio-app:b14b08f
         ports:
         - containerPort: 3000
         env:
