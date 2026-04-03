@@ -18,14 +18,11 @@ const NAV_ITEMS = [
 
 export default function HomelabNavigation() {
   const [isOpen, setIsOpen] = useState(false)
-  const [hidden, setHidden] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const { scrollY } = useScroll()
   const activeSection = useScrollSpy(HOMELAB_SECTIONS)
 
   useMotionValueEvent(scrollY, 'change', (latest) => {
-    const previous = scrollY.getPrevious() ?? 0
-    setHidden(latest > previous && latest > 150)
     setScrolled(latest > 50)
   })
 
@@ -41,8 +38,7 @@ export default function HomelabNavigation() {
   return (
     <motion.header
       initial={{ y: 0 }}
-      animate={{ y: hidden ? -100 : 0 }}
-      transition={{ duration: 0.3 }}
+      animate={{ y: 0 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${
         scrolled
           ? 'bg-background/80 backdrop-blur-xl border-b border-border/50'
