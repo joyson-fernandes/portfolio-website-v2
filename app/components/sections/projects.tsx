@@ -11,17 +11,17 @@ import { useProjects } from '@/hooks/useProjects'
 
 const HOMELAB_PROJECTS = [
   {
+    title: 'Internal Developer Platform',
+    description:
+      'Self-service namespace provisioning via GitOps. Developers add a config.yaml, raise a PR, and get a fully configured K8s namespace with ResourceQuotas, CiliumNetworkPolicies, RBAC, ServiceMonitor, and Vault secrets — all via ArgoCD ApplicationSet.',
+    technologies: ['Go', 'Kubernetes', 'ArgoCD', 'Kyverno', 'Vault', 'Cilium', 'Helm'],
+    github: 'https://github.com/joyson-fernandes/platform',
+  },
+  {
     title: 'LinkVolt',
     description:
       'URL shortener & link page SaaS — 6 Go microservices (CQRS) on a self-managed 4-node HA K8s cluster. Full GitOps via ArgoCD App-of-Apps, Gitea Actions CI/CD, Cilium CNI, Sealed Secrets, and hybrid failover to Fly.io.',
     technologies: ['Go', 'Kubernetes', 'ArgoCD', 'Cilium', 'PostgreSQL', 'SQS', 'Prometheus'],
-    github: 'https://github.com/joyson-fernandes',
-  },
-  {
-    title: 'Homelab Platform',
-    description:
-      'Production-grade 4-node HA Kubernetes cluster on VMware ESXi/vCenter. ArgoCD GitOps, Cilium CNI, kube-vip, Prometheus/Grafana/Loki observability, and hands-on exploration of Backstage, Crossplane, and Karpenter.',
-    technologies: ['Kubernetes', 'ArgoCD', 'Cilium', 'Prometheus', 'Grafana', 'VMware'],
     github: 'https://github.com/joyson-fernandes',
   },
   {
