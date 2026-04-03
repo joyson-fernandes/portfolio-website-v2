@@ -1,0 +1,52 @@
+[
+  {
+    "id": "cilium-over-calico",
+    "title": "Cilium over Calico",
+    "status": "Accepted",
+    "date": "2024-11",
+    "context": "Needed a CNI for the homelab K8s cluster that supports advanced network policies, observability, and eBPF-based dataplane.",
+    "decision": "Chose Cilium for its eBPF-based networking, built-in Hubble observability, and CiliumNetworkPolicy CRDs which are more expressive than vanilla NetworkPolicy.",
+    "consequences": "Better L7 visibility, eBPF performance gains, native support for identity-based policies. Trade-off: higher memory footprint than Calico, steeper learning curve.",
+    "category": "Networking"
+  },
+  {
+    "id": "vault-over-sealed-secrets",
+    "title": "Vault HA over Sealed Secrets",
+    "status": "Accepted",
+    "date": "2024-12",
+    "context": "Needed secrets management for K8s workloads. Options: Sealed Secrets (simple, GitOps-native), Vault (full-featured, HA, dynamic secrets).",
+    "decision": "Chose HashiCorp Vault in HA mode (3-replica Raft) with External Secrets Operator to sync secrets into K8s. Sealed Secrets was simpler but lacked rotation, audit logging, and dynamic credentials.",
+    "consequences": "Full audit trail, automatic secret rotation, dynamic database credentials. Trade-off: operational overhead of running Vault HA, more complex disaster recovery.",
+    "category": "Security"
+  },
+  {
+    "id": "argocd-over-flux",
+    "title": "ArgoCD over Flux",
+    "status": "Accepted",
+    "date": "2024-10",
+    "context": "Needed a GitOps operator to manage 22+ applications across multiple namespaces from a Git repo.",
+    "decision": "Chose ArgoCD for its UI, Application/ApplicationSet CRDs, SSO integration, and RBAC model. Flux is lighter but the ArgoCD dashboard gives immediate visibility into sync state across all apps.",
+    "consequences": "Single pane of glass for all deployments. App-of-Apps pattern scales well. Trade-off: heavier resource footprint than Flux, UI can become a crutch vs. CLI-first workflows.",
+    "category": "GitOps"
+  },
+  {
+    "id": "longhorn-over-openebs",
+    "title": "Longhorn over OpenEBS",
+    "status": "Accepted",
+    "date": "2024-11",
+    "context": "Needed distributed block storage for stateful workloads (PostgreSQL, Redis) on bare-metal K8s with data replication.",
+    "decision": "Chose Longhorn for its simplicity, built-in UI, snapshot/backup to S3 (MinIO), and 2-replica configuration. OpenEBS cStor was more complex to operate.",
+    "consequences": "Easy backup to TrueNAS MinIO, volume snapshots for DR, automatic replica rebuilds. Trade-off: lower IOPS than local-path or OpenEBS Mayastor for high-throughput workloads.",
+    "category": "Storage"
+  },
+  {
+    "id": "go-for-linkvolt",
+    "title": "Go for Linkvolt Microservices",
+    "status": "Accepted",
+    "date": "2025-01",
+    "context": "Building a link-in-bio SaaS with 6 microservices. Needed a language that produces small container images, handles concurrency well, and compiles to a single binary.",
+    "decision": "Chose Go for its small binary size (scratch/distroless images ~15MB), goroutine concurrency model, fast compile times, and excellent K8s ecosystem (client-go, controller-runtime).",
+    "consequences": "Tiny container images, fast cold starts, easy to deploy as static binaries. Trade-off: more verbose than Python for quick prototyping, less library ecosystem for web UI.",
+    "category": "Development"
+  }
+]
