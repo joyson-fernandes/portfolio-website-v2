@@ -10,7 +10,7 @@ interface ServiceStatus {
 
 const SERVICES = [
   { name: 'Portfolio', url: 'http://portfolio-app.portfolio.svc.cluster.local', category: 'Applications' },
-  { name: 'ArgoCD', url: 'https://argocd-server.argocd.svc.cluster.local', category: 'Platform' },
+  { name: 'ArgoCD', url: 'http://argocd-server.argocd.svc.cluster.local:80', category: 'Platform', expectRedirect: true },
   { name: 'Harbor Registry', url: 'http://harbor-portal.harbor.svc.cluster.local', category: 'Platform' },
   { name: 'Vault', url: 'http://vault.vault.svc.cluster.local:8200/v1/sys/health', category: 'Security' },
   { name: 'Prometheus', url: 'http://kube-prometheus-kube-prome-prometheus.monitoring.svc.cluster.local:9090/-/healthy', category: 'Observability' },
@@ -26,16 +26,17 @@ async function checkService(service: typeof SERVICES[0]): Promise<ServiceStatus>
 
     const response = await fetch(service.url, {
       signal: controller.signal,
-      // Skip TLS verification for internal services
-      ...(service.url.startsWith('https') ? { next: { revalidate: 0 } } : {}),
+      redirect: 'manual', // Don't follow redirects (ArgoCD redirects HTTP→HTTPS)
     })
     clearTimeout(timeout)
 
     const latency = Date.now() - start
+    // Treat 2xx and 3xx (redirects) as up — ArgoCD returns 307 on HTTP
+    const isUp = response.status < 400
     return {
       name: service.name,
       url: service.url,
-      status: response.ok ? 'up' : 'degraded',
+      status: isUp ? 'up' : 'degraded',
       latency,
       category: service.category,
     }
