@@ -10,7 +10,7 @@ interface ServiceStatus {
 
 const SERVICES = [
   { name: 'Portfolio', url: 'http://portfolio-app.portfolio.svc.cluster.local', category: 'Applications' },
-  { name: 'ArgoCD', url: 'http://argocd-server.argocd.svc.cluster.local:80', category: 'Platform', expectRedirect: true },
+  { name: 'ArgoCD', url: 'http://argocd-server.argocd.svc.cluster.local:80', category: 'Platform' },
   { name: 'Harbor Registry', url: 'http://harbor-portal.harbor.svc.cluster.local', category: 'Platform' },
   { name: 'Vault', url: 'http://vault.vault.svc.cluster.local:8200/v1/sys/health', category: 'Security' },
   { name: 'Prometheus', url: 'http://kube-prometheus-kube-prome-prometheus.monitoring.svc.cluster.local:9090/-/healthy', category: 'Observability' },
@@ -22,16 +22,17 @@ async function checkService(service: typeof SERVICES[0]): Promise<ServiceStatus>
   const start = Date.now()
   try {
     const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), 5000)
+    const timeout = setTimeout(() => controller.abort(), 8000)
 
     const response = await fetch(service.url, {
       signal: controller.signal,
-      redirect: 'manual', // Don't follow redirects (ArgoCD redirects HTTP→HTTPS)
+      redirect: 'manual',
+      cache: 'no-store',
+      headers: { 'User-Agent': 'portfolio-status-check' },
     })
     clearTimeout(timeout)
 
     const latency = Date.now() - start
-    // Treat 2xx and 3xx (redirects) as up — ArgoCD returns 307 on HTTP
     const isUp = response.status < 400
     return {
       name: service.name,
@@ -40,7 +41,8 @@ async function checkService(service: typeof SERVICES[0]): Promise<ServiceStatus>
       latency,
       category: service.category,
     }
-  } catch {
+  } catch (err) {
+    console.error(`Status check failed for ${service.name}:`, err instanceof Error ? err.message : err)
     return {
       name: service.name,
       url: service.url,
@@ -50,6 +52,8 @@ async function checkService(service: typeof SERVICES[0]): Promise<ServiceStatus>
     }
   }
 }
+
+export const dynamic = 'force-dynamic'
 
 export async function GET() {
   const results = await Promise.all(SERVICES.map(checkService))
