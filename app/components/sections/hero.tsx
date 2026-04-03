@@ -116,9 +116,9 @@ export default function Hero() {
           transition={{ duration: 0.5, delay: 1.8 }}
           className="flex flex-col sm:flex-row items-center justify-center gap-4"
         >
-          <ShimmerButton href="#infrastructure">
+          <ShimmerButton href="/homelab">
             <Server className="h-4 w-4" />
-            View Infrastructure
+            Explore Homelab
           </ShimmerButton>
           <OutlineButton href="#about">
             Learn More

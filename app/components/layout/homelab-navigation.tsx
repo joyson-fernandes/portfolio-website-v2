@@ -2,27 +2,26 @@
 
 import { useState, useEffect } from 'react'
 import { motion, useScroll, useMotionValueEvent } from 'framer-motion'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
-import { useScrollSpy, MAIN_SECTIONS } from '@/hooks/useScrollSpy'
+import { useScrollSpy, HOMELAB_SECTIONS } from '@/hooks/useScrollSpy'
 import NavActions, { SOCIAL_LINKS } from '@/components/layout/nav-actions'
 import ThemeToggle from '@/components/shared/theme-toggle'
 
 const NAV_ITEMS = [
-  { label: 'About', href: '#about' },
-  { label: 'Skills', href: '#skills' },
-  { label: 'Homelab', href: '/homelab', isPage: true },
-  { label: 'Projects', href: '#projects' },
-  { label: 'Experience', href: '#experience' },
-  { label: 'Certifications', href: '#certifications' },
+  { label: 'Infrastructure', href: '#infrastructure' },
+  { label: 'Pipeline', href: '#pipeline' },
+  { label: 'Monitoring', href: '#monitoring' },
+  { label: 'Status', href: '#status' },
+  { label: 'ADRs', href: '#adrs' },
 ]
 
-export default function Navigation() {
+export default function HomelabNavigation() {
   const [isOpen, setIsOpen] = useState(false)
   const [hidden, setHidden] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const { scrollY } = useScroll()
-  const activeSection = useScrollSpy(MAIN_SECTIONS)
+  const activeSection = useScrollSpy(HOMELAB_SECTIONS)
 
   useMotionValueEvent(scrollY, 'change', (latest) => {
     const previous = scrollY.getPrevious() ?? 0
@@ -52,27 +51,18 @@ export default function Navigation() {
     >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <a href="#hero" className="flex items-center gap-2 group">
-            <span className="text-lg font-bold tracking-tight gradient-text">
-              JF
-            </span>
-          </a>
+          {/* Back to portfolio */}
+          <Link
+            href="/"
+            className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span className="hidden sm:inline">Portfolio</span>
+          </Link>
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-1">
             {NAV_ITEMS.map((item) => {
-              if (item.isPage) {
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className="relative px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {item.label}
-                  </Link>
-                )
-              }
               const sectionId = item.href.replace('#', '')
               const isActive = activeSection === sectionId
               return (
@@ -88,8 +78,8 @@ export default function Navigation() {
                   {item.label}
                   {isActive && (
                     <motion.div
-                      layoutId="nav-indicator"
-                      className="absolute inset-x-1 -bottom-[1px] h-[2px] bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full"
+                      layoutId="homelab-nav-indicator"
+                      className="absolute inset-x-1 -bottom-[1px] h-[2px] bg-gradient-to-r from-violet-500 to-cyan-500 rounded-full"
                       transition={{ type: 'spring', stiffness: 350, damping: 30 }}
                     />
                   )}
@@ -121,27 +111,24 @@ export default function Navigation() {
           className="md:hidden bg-background/95 backdrop-blur-xl border-b border-border"
         >
           <div className="px-4 py-6 space-y-1">
-            {NAV_ITEMS.map((item) =>
-              item.isPage ? (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setIsOpen(false)}
-                  className="block px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors"
-                >
-                  {item.label}
-                </Link>
-              ) : (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setIsOpen(false)}
-                  className="block px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors"
-                >
-                  {item.label}
-                </a>
-              )
-            )}
+            <Link
+              href="/"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center gap-2 px-3 py-2.5 text-sm font-medium text-primary hover:bg-accent rounded-lg transition-colors mb-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to Portfolio
+            </Link>
+            {NAV_ITEMS.map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                onClick={() => setIsOpen(false)}
+                className="block px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors"
+              >
+                {item.label}
+              </a>
+            ))}
             <div className="pt-4 border-t border-border mt-4 flex items-center gap-2">
               {SOCIAL_LINKS.map((link) => (
                 <a
