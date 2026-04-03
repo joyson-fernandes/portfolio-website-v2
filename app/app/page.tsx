@@ -8,7 +8,6 @@ import Skills from '@/components/sections/skills'
 import Grafana from '@/components/sections/grafana'
 import Status from '@/components/sections/status'
 import Projects from '@/components/sections/projects'
-import Terminal from '@/components/sections/terminal'
 import Experience from '@/components/sections/experience'
 import Certifications from '@/components/sections/certifications'
 import ADRs from '@/components/sections/adrs'
@@ -29,7 +28,6 @@ export default function Home() {
       <Grafana />
       <Status />
       <Projects />
-      <Terminal />
       <Experience />
       <Certifications />
       <ADRs />
