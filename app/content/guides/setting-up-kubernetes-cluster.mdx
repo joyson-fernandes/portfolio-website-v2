@@ -1,0 +1,208 @@
+---
+title: "Setting Up a 6-Node Kubernetes Cluster with kubeadm"
+slug: "setting-up-kubernetes-cluster"
+description: "Step-by-step guide to bootstrapping a production-grade K8s cluster on bare metal with kubeadm, kube-vip for HA, and Cilium CNI."
+category: "kubernetes"
+date: "2026-04-03"
+updated: "2026-04-03"
+difficulty: "intermediate"
+duration: "45 min"
+services: ["Kubernetes", "kubeadm", "kube-vip", "Cilium", "MetalLB"]
+published: true
+---
+
+## Overview
+
+This guide walks through setting up a 6-node Kubernetes cluster (3 control planes, 3 workers) on bare-metal VMs running Ubuntu 22.04. We use kubeadm for bootstrapping, kube-vip for control plane HA, Cilium as the CNI, and MetalLB for LoadBalancer services.
+
+> This is the exact setup running in my homelab. Every command here has been tested on my cluster.
+
+## Prerequisites
+
+- 6 VMs running Ubuntu 22.04 LTS (2 CPU, 4GB RAM minimum per node)
+- Static IPs assigned to each node
+- SSH access to all nodes
+- A reserved IP for the kube-vip VIP (e.g., `10.0.1.20`)
+- Swap disabled on all nodes
+
+## Architecture
+
+| Role | Hostname | IP |
+|------|----------|----|
+| Control Plane 1 | k8s-cp01 | 10.0.1.21 |
+| Control Plane 2 | k8s-cp02 | 10.0.1.22 |
+| Control Plane 3 | k8s-cp03 | 10.0.1.23 |
+| Worker 1 | k8s-w01 | 10.0.1.31 |
+| Worker 2 | k8s-w02 | 10.0.1.32 |
+| Worker 3 | k8s-w03 | 10.0.1.33 |
+| VIP (kube-vip) | — | 10.0.1.20 |
+
+## Steps
+
+### 1. Prepare all nodes
+
+Run this on **all 6 nodes** to install containerd and kubeadm:
+
+```bash
+# Disable swap
+sudo swapoff -a
+sudo sed -i '/ swap / s/^/#/' /etc/fstab
+
+# Load kernel modules
+cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
+overlay
+br_netfilter
+EOF
+sudo modprobe overlay
+sudo modprobe br_netfilter
+
+# Sysctl params
+cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.ipv4.ip_forward                 = 1
+EOF
+sudo sysctl --system
+```
+
+### 2. Install containerd
+
+```bash
+sudo apt-get update
+sudo apt-get install -y containerd
+
+# Configure containerd to use systemd cgroup driver
+sudo mkdir -p /etc/containerd
+containerd config default | sudo tee /etc/containerd/config.toml
+sudo sed -i 's/SystemdCgroup = false/SystemdCgroup = true/' /etc/containerd/config.toml
+sudo systemctl restart containerd
+```
+
+### 3. Install kubeadm, kubelet, and kubectl
+
+```bash
+sudo apt-get install -y apt-transport-https ca-certificates curl
+
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.31/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.31/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+sudo apt-get update
+sudo apt-get install -y kubelet kubeadm kubectl
+sudo apt-mark hold kubelet kubeadm kubectl
+```
+
+### 4. Set up kube-vip on the first control plane
+
+On `k8s-cp01` only, create the kube-vip static pod manifest:
+
+```bash
+export VIP=10.0.1.20
+export INTERFACE=eth0
+
+# Pull kube-vip image
+sudo ctr image pull ghcr.io/kube-vip/kube-vip:v0.8.0
+
+# Generate manifest
+sudo ctr run --rm --net-host ghcr.io/kube-vip/kube-vip:v0.8.0 vip \
+  /kube-vip manifest pod \
+  --interface $INTERFACE \
+  --address $VIP \
+  --controlplane \
+  --arp \
+  --leaderElection | sudo tee /etc/kubernetes/manifests/kube-vip.yaml
+```
+
+### 5. Initialize the first control plane
+
+```bash
+sudo kubeadm init \
+  --control-plane-endpoint "10.0.1.20:6443" \
+  --upload-certs \
+  --pod-network-cidr=10.244.0.0/16 \
+  --skip-phases=addon/kube-proxy
+```
+
+> We skip kube-proxy because Cilium will replace it with eBPF-based routing.
+
+Save the output — you'll need the `kubeadm join` commands for the other nodes.
+
+```bash
+# Set up kubectl for the current user
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+```
+
+### 6. Install Cilium CNI
+
+```bash
+# Install Cilium CLI
+CILIUM_CLI_VERSION=$(curl -s https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt)
+curl -L --fail --remote-name-all https://github.com/cilium/cilium-cli/releases/download/${CILIUM_CLI_VERSION}/cilium-linux-amd64.tar.gz
+sudo tar xzvfC cilium-linux-amd64.tar.gz /usr/local/bin
+
+# Install Cilium with kube-proxy replacement
+cilium install \
+  --set kubeProxyReplacement=true \
+  --set k8sServiceHost=10.0.1.20 \
+  --set k8sServicePort=6443
+```
+
+### 7. Join remaining control planes
+
+On `k8s-cp02` and `k8s-cp03`, run the control plane join command from step 5 output:
+
+```bash
+sudo kubeadm join 10.0.1.20:6443 \
+  --token <token> \
+  --discovery-token-ca-cert-hash sha256:<hash> \
+  --control-plane \
+  --certificate-key <cert-key>
+```
+
+Copy the kube-vip manifest to each new control plane:
+
+```bash
+# On k8s-cp01, copy to other CPs
+scp /etc/kubernetes/manifests/kube-vip.yaml k8s-cp02:/etc/kubernetes/manifests/
+scp /etc/kubernetes/manifests/kube-vip.yaml k8s-cp03:/etc/kubernetes/manifests/
+```
+
+### 8. Join worker nodes
+
+On all 3 workers, run the worker join command:
+
+```bash
+sudo kubeadm join 10.0.1.20:6443 \
+  --token <token> \
+  --discovery-token-ca-cert-hash sha256:<hash>
+```
+
+## Verification
+
+Check that all nodes are ready:
+
+```bash
+kubectl get nodes
+# All 6 nodes should show Ready status
+
+kubectl get pods -n kube-system
+# All system pods should be Running
+
+cilium status
+# Cilium should show OK for all components
+```
+
+## Troubleshooting
+
+**Nodes stuck in NotReady:** Check if Cilium pods are running — `kubectl get pods -n kube-system -l app.kubernetes.io/name=cilium`. If not, check containerd is running and the CNI config exists.
+
+**kube-vip VIP not responding:** Ensure the VIP IP is not in use by another device. Check ARP with `arping -I eth0 10.0.1.20`.
+
+**Join token expired:** Generate a new one with `kubeadm token create --print-join-command`.
+
+## Next Steps
+
+- [Install MetalLB](/homelab/guides/setting-up-metallb) for LoadBalancer services
+- [Install Longhorn](/homelab/guides/setting-up-longhorn) for distributed storage
+- [Install ArgoCD](/homelab/guides/setting-up-argocd) for GitOps deployments

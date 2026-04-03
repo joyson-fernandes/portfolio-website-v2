@@ -14,6 +14,7 @@ const NAV_ITEMS = [
   { label: 'Monitoring', href: '#monitoring' },
   { label: 'Status', href: '#status' },
   { label: 'ADRs', href: '#adrs' },
+  { label: 'Guides', href: '/homelab/guides', isPage: true },
 ]
 
 export default function HomelabNavigation() {
@@ -59,6 +60,17 @@ export default function HomelabNavigation() {
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-1">
             {NAV_ITEMS.map((item) => {
+              if ('isPage' in item && item.isPage) {
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="relative px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {item.label}
+                  </Link>
+                )
+              }
               const sectionId = item.href.replace('#', '')
               const isActive = activeSection === sectionId
               return (
@@ -115,16 +127,27 @@ export default function HomelabNavigation() {
               <ArrowLeft className="h-4 w-4" />
               Back to Portfolio
             </Link>
-            {NAV_ITEMS.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                onClick={() => setIsOpen(false)}
-                className="block px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors"
-              >
-                {item.label}
-              </a>
-            ))}
+            {NAV_ITEMS.map((item) =>
+              'isPage' in item && item.isPage ? (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setIsOpen(false)}
+                  className="block px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors"
+                >
+                  {item.label}
+                </Link>
+              ) : (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setIsOpen(false)}
+                  className="block px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors"
+                >
+                  {item.label}
+                </a>
+              )
+            )}
             <div className="pt-4 border-t border-border mt-4 flex items-center gap-2">
               {SOCIAL_LINKS.map((link) => (
                 <a
