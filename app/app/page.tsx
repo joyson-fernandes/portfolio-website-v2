@@ -18,11 +18,11 @@ export default function Home() {
       <Metrics />
       <About />
       <Skills />
-      <HomelabCTA />
       <Projects />
       <Experience />
       <Certifications />
       <GitHubActivity />
+      <HomelabCTA />
       <Footer />
     </main>
   )

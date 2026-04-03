@@ -40,8 +40,8 @@ const HIGHLIGHT_ICONS: Record<string, React.ElementType> = {
 const STATS = [
   { value: 5, suffix: '+', label: 'Years Experience' },
   { value: 11, suffix: '+', label: 'Certifications' },
-  { value: 6, suffix: '', label: 'Node K8s Cluster' },
-  { value: 22, suffix: '', label: 'ArgoCD Apps' },
+  { value: 3, suffix: '', label: 'Cloud Platforms' },
+  { value: 50, suffix: '+', label: 'Projects Delivered' },
 ]
 
 const fallbackData: AboutData = {

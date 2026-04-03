@@ -11,10 +11,10 @@ import ThemeToggle from '@/components/shared/theme-toggle'
 const NAV_ITEMS = [
   { label: 'About', href: '#about' },
   { label: 'Skills', href: '#skills' },
-  { label: 'Homelab', href: '/homelab', isPage: true },
   { label: 'Projects', href: '#projects' },
   { label: 'Experience', href: '#experience' },
   { label: 'Certifications', href: '#certifications' },
+  { label: 'Homelab', href: '/homelab', isPage: true },
 ]
 
 export default function Navigation() {
@@ -79,20 +79,20 @@ export default function Navigation() {
                 <a
                   key={item.href}
                   href={item.href}
-                  className={`relative px-3 py-2 text-sm font-medium transition-colors ${
+                  className={`relative px-3 py-1.5 text-sm font-medium rounded-full transition-colors ${
                     isActive
                       ? 'text-foreground'
                       : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
-                  {item.label}
                   {isActive && (
                     <motion.div
                       layoutId="nav-indicator"
-                      className="absolute inset-x-1 -bottom-[1px] h-[2px] bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full"
+                      className="absolute inset-0 rounded-full bg-accent border border-border"
                       transition={{ type: 'spring', stiffness: 350, damping: 30 }}
                     />
                   )}
+                  <span className="relative z-10">{item.label}</span>
                 </a>
               )
             })}
