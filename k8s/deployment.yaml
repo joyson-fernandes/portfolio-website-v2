@@ -86,7 +86,6 @@ spec:
     kind: ClusterIssuer
   dnsNames:
     - joysonfernandes.com
-    - www.joysonfernandes.com
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
@@ -98,7 +97,7 @@ spec:
     - websecure
   routes:
     - kind: Rule
-      match: Host(`joysonfernandes.com`) || Host(`www.joysonfernandes.com`)
+      match: Host(`joysonfernandes.com`)
       services:
         - name: portfolio-app
           port: 80
@@ -115,7 +114,7 @@ spec:
     - web
   routes:
     - kind: Rule
-      match: Host(`joysonfernandes.com`) || Host(`www.joysonfernandes.com`)
+      match: Host(`joysonfernandes.com`)
       middlewares:
         - name: redirect-https
       services:
