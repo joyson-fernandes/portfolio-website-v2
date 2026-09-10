@@ -11,20 +11,21 @@ Personal portfolio website for Joyson Fernandes — Platform & DevOps Engineer.
 ## Infrastructure
 
 - **K8s namespace:** `portfolio`
-- **Image:** `registry.joysontech.com/library/portfolio-app`
-- **Service:** LoadBalancer at `10.0.1.66:80`
-- **Domain:** `joysonfernandes.com` via NPM (Nginx Proxy Manager) at `172.16.0.34`
-- **ArgoCD:** managed as `portfolio` app, reads from `k8s/` directory, auto-sync enabled, GitHub webhook for instant sync
+- **Image:** `ghcr.io/joyson-fernandes/portfolio-website` (public package, no imagePullSecret needed)
+- **Domain:** `joysonfernandes.com` via Traefik IngressRoute + cert-manager TLS
+- **ArgoCD:** managed as `portfolio` app in the separate **`joyson-fernandes/ArgoCD`** repo (`~/ArgoCD` locally) — `apps/portfolio.yaml` points at `manifests/portfolio/portfolio.yaml` in that same repo. This repo (`portfolio-website-v2`) does **not** contain the deployed manifests — there is no `k8s/` directory. Auto-sync enabled, GitHub webhook for instant sync.
 - **ArgoCD URL:** https://argocd.joysontech.com
 - **Grafana URL:** https://grafana.joysontech.com (Public org with anonymous read-only access for portfolio embeds)
-- **CI:** GitHub Actions with self-hosted runner on `10.0.1.40`
-- **Registry:** Harbor at `registry.joysontech.com`
+- **CI:** GitHub Actions, self-hosted runner pods in-cluster via Actions Runner Controller (ARC) — scale set `portfolio-k8s` in namespace `arc-runners`. Controller, buildkitd, and runner scale set are all deployed via ArgoCD from the `joyson-fernandes/ArgoCD` repo (`apps/arc-*.yaml`, `apps/buildkitd.yaml`, manifests under `manifests/buildkitd/` and `manifests/arc-runner-rbac/`)
+- **Registry:** GitHub Container Registry (ghcr.io), pushed to via the built-in `GITHUB_TOKEN`
 
 ## CI Pipeline
 
-- **Production (push to main):** GitHub Actions → Docker build → Trivy scan → push to Harbor → commit image tag to k8s/deployment.yaml `[skip ci]` → ArgoCD syncs via webhook
-- **PR Preview:** GitHub Actions → Docker build → Trivy scan → push to Harbor → run preview container on runner at `http://10.0.1.40:<4000+PR#>` → auto-comment URL on PR → cleanup on PR close
-- **CI needs `permissions: contents: write`** for the image tag commit step
+- **Production (push to main):** GitHub Actions on `portfolio-k8s` runner → `buildctl` build against in-cluster rootless `buildkitd` → Trivy scan (remote, no daemon needed) → push to GHCR (tag = short SHA, plus `:latest`) → checkout `joyson-fernandes/ArgoCD` repo, bump the image tag in `manifests/portfolio/portfolio.yaml`, commit + push `[skip ci]` → ArgoCD syncs via webhook
+- **PR Preview:** same build/scan/push (tag = `pr-<PR#>`), then `kubectl apply` a per-PR namespace (`portfolio-preview-<PR#>`) with a Deployment + NodePort Service → auto-comment URL on PR → namespace deleted on PR close
+- **No Docker daemon on runners** — pods have no privileged DinD; builds go through `buildctl` talking to a shared rootless `buildkitd` Deployment (`buildkitd.arc-runners.svc.cluster.local:1234`), Trivy scans run with `--image-src remote`
+- **Runner RBAC:** the `portfolio-k8s` scale set runs as `arc-runner-portfolio` ServiceAccount, scoped via ClusterRole to manage `portfolio-preview-*` namespaces + their Deployments/Services/IngressRoutes only
+- **Secrets needed:** repo secret `ARGOCD_REPO_TOKEN` — a PAT with write access to `joyson-fernandes/ArgoCD` (the built-in `GITHUB_TOKEN` can't push cross-repo). `GITHUB_TOKEN` alone covers the GHCR push (`permissions: packages: write`).
 
 ## Build Notes
 

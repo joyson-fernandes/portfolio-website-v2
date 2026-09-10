@@ -6,70 +6,113 @@ on:
   pull_request:
     branches: [main]
 
+env:
+  IMAGE: ghcr.io/joyson-fernandes/portfolio-website
+  BUILDKIT_HOST: tcp://buildkitd.arc-runners.svc.cluster.local:1234
+  BUILDKIT_VERSION: v0.17.1
+
 jobs:
-  # Preview: runs on PRs — builds image and starts a preview container on the runner
+  # Preview: runs on PRs — builds image and deploys it to a per-PR namespace
   preview:
-    runs-on: self-hosted
-    if: github.event_name == 'pull_request'
+    runs-on: portfolio-k8s
+    if: github.event_name == 'pull_request' && github.event.action != 'closed'
+    permissions:
+      contents: read
+      packages: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
 
-      - name: Log in to Harbor
-        run: echo "${{ secrets.HARBOR_PASSWORD }}" | docker login ${{ secrets.HARBOR_REGISTRY }} -u "${{ secrets.HARBOR_USERNAME }}" --password-stdin
+      - name: Install buildctl
+        run: |
+          curl -sSL "https://github.com/moby/buildkit/releases/download/${BUILDKIT_VERSION}/buildkit-${BUILDKIT_VERSION}.linux-amd64.tar.gz" \
+            | tar -xz -C /tmp
+          sudo mv /tmp/bin/buildctl /usr/local/bin/buildctl
 
-      - name: Build preview image
+      - name: Log in to GHCR (registry auth for buildctl)
+        run: |
+          mkdir -p ~/.docker
+          AUTH=$(echo -n "${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}" | base64 -w0)
+          echo "{\"auths\":{\"ghcr.io\":{\"auth\":\"$AUTH\"}}}" > ~/.docker/config.json
+
+      - name: Build and push preview image
         run: |
           TAG="pr-${{ github.event.number }}"
-          REGISTRY="${{ secrets.HARBOR_REGISTRY }}/library"
+          buildctl build \
+            --frontend dockerfile.v0 \
+            --local context=./app \
+            --local dockerfile=./app \
+            --output type=image,name=$IMAGE:$TAG,push=true
 
-          for attempt in 1 2 3; do
-            docker build --network=host -t $REGISTRY/portfolio-app:$TAG ./app && break
-            echo "Build failed (attempt $attempt/3), retrying..."
-            sleep 5
-          done
-
-          # Scan
-          if command -v trivy &> /dev/null; then
-            trivy image --exit-code 1 --severity CRITICAL,HIGH --no-progress $REGISTRY/portfolio-app:$TAG || true
-          fi
-
-          docker push $REGISTRY/portfolio-app:$TAG
-
-      - name: Deploy preview container
+      - name: Scan image with Trivy
         run: |
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+          trivy image --image-src remote --exit-code 1 --severity CRITICAL,HIGH --no-progress $IMAGE:pr-${{ github.event.number }}
+
+      - name: Deploy preview to K8s
+        run: |
+          NS="portfolio-preview-${{ github.event.number }}"
           TAG="pr-${{ github.event.number }}"
-          CONTAINER="portfolio-preview-${{ github.event.number }}"
-          REGISTRY="${{ secrets.HARBOR_REGISTRY }}/library"
-          PREVIEW_PORT=$((4000 + ${{ github.event.number }}))
+          PORT=$((30000 + (${{ github.event.number }} % 2700)))
+          NODE_IP=$(kubectl get nodes -o jsonpath='{.items[0].status.addresses[0].address}')
 
-          # Stop existing preview if running
-          docker rm -f $CONTAINER 2>/dev/null || true
+          kubectl create namespace $NS --dry-run=client -o yaml | kubectl apply -f -
 
-          # Run preview container
-          docker run -d \
-            --name $CONTAINER \
-            -p $PREVIEW_PORT:3000 \
-            -e PORT=3000 \
-            -e NODE_ENV=production \
-            --restart unless-stopped \
-            $REGISTRY/portfolio-app:$TAG
+          cat <<EOF | kubectl apply -f -
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: portfolio-preview
+            namespace: $NS
+          spec:
+            replicas: 1
+            selector:
+              matchLabels:
+                app: portfolio-preview
+            template:
+              metadata:
+                labels:
+                  app: portfolio-preview
+              spec:
+                containers:
+                - name: portfolio-app
+                  image: $IMAGE:$TAG
+                  ports:
+                  - containerPort: 3000
+                  env:
+                  - name: PORT
+                    value: "3000"
+                  - name: NODE_ENV
+                    value: "production"
+          ---
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: portfolio-preview
+            namespace: $NS
+          spec:
+            type: NodePort
+            selector:
+              app: portfolio-preview
+            ports:
+            - port: 3000
+              targetPort: 3000
+              nodePort: $PORT
+          EOF
+
+          kubectl rollout status deployment/portfolio-preview -n $NS --timeout=120s
 
           echo "## 🔍 Preview Deployed" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Preview is running at: **http://10.0.1.40:${PREVIEW_PORT}**" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Container: \`$CONTAINER\` | Image: \`portfolio-app:$TAG\`" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "_Preview will be cleaned up when the PR is merged or closed._" >> $GITHUB_STEP_SUMMARY
+          echo "Preview is running at: **http://${NODE_IP}:${PORT}**" >> $GITHUB_STEP_SUMMARY
+          echo "PREVIEW_URL=http://${NODE_IP}:${PORT}" >> $GITHUB_ENV
 
       - name: Comment preview URL on PR
         uses: actions/github-script@v7
         with:
           script: |
-            const port = 4000 + ${{ github.event.number }};
-            const body = `### 🔍 Preview Deployed\n\nPreview is running at: **http://10.0.1.40:${port}**\n\n_Updated at ${new Date().toISOString()}_`;
+            const body = `### 🔍 Preview Deployed\n\nPreview is running at: **${{ env.PREVIEW_URL }}**\n\n_Updated at ${new Date().toISOString()}_`;
 
-            // Find existing preview comment
             const comments = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -95,59 +138,67 @@ jobs:
 
   # Cleanup: runs when PR is merged or closed
   preview-cleanup:
-    runs-on: self-hosted
-    if: github.event_name == 'pull_request' && (github.event.action == 'closed')
+    runs-on: portfolio-k8s
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
     steps:
-      - name: Stop preview container
+      - name: Delete preview namespace
         run: |
-          CONTAINER="portfolio-preview-${{ github.event.number }}"
-          docker rm -f $CONTAINER 2>/dev/null || true
-          echo "Cleaned up preview container: $CONTAINER"
+          kubectl delete namespace portfolio-preview-${{ github.event.number }} --ignore-not-found
 
   # Production: runs on push to main
   build-and-deploy:
-    runs-on: self-hosted
+    runs-on: portfolio-k8s
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     permissions:
-      contents: write
+      contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Log in to Harbor
-        run: echo "${{ secrets.HARBOR_PASSWORD }}" | docker login ${{ secrets.HARBOR_REGISTRY }} -u "${{ secrets.HARBOR_USERNAME }}" --password-stdin
+      - name: Install buildctl
+        run: |
+          curl -sSL "https://github.com/moby/buildkit/releases/download/${BUILDKIT_VERSION}/buildkit-${BUILDKIT_VERSION}.linux-amd64.tar.gz" \
+            | tar -xz -C /tmp
+          sudo mv /tmp/bin/buildctl /usr/local/bin/buildctl
+
+      - name: Log in to GHCR (registry auth for buildctl)
+        run: |
+          mkdir -p ~/.docker
+          AUTH=$(echo -n "${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}" | base64 -w0)
+          echo "{\"auths\":{\"ghcr.io\":{\"auth\":\"$AUTH\"}}}" > ~/.docker/config.json
 
       - name: Build and push
         run: |
           TAG=$(git rev-parse --short HEAD)
-          REGISTRY="${{ secrets.HARBOR_REGISTRY }}/library"
-
-          # Build with retry (npm can ECONNRESET on large installs)
-          for attempt in 1 2 3; do
-            docker build --network=host -t $REGISTRY/portfolio-app:$TAG -t $REGISTRY/portfolio-app:latest ./app && break
-            echo "Build failed (attempt $attempt/3), retrying..."
-            sleep 5
-          done
-
-          # Scan
-          if command -v trivy &> /dev/null; then
-            trivy image --exit-code 1 --severity CRITICAL,HIGH --no-progress $REGISTRY/portfolio-app:$TAG || true
-          fi
-
-          docker push $REGISTRY/portfolio-app:$TAG
-          docker push $REGISTRY/portfolio-app:latest
+          buildctl build \
+            --frontend dockerfile.v0 \
+            --local context=./app \
+            --local dockerfile=./app \
+            --output type=image,name=$IMAGE:$TAG,name=$IMAGE:latest,push=true
           echo "IMAGE_TAG=$TAG" >> $GITHUB_ENV
 
-      - name: Update image tag in k8s manifest
+      - name: Scan image with Trivy
         run: |
-          sed -i "s|image: registry.joysontech.com/library/portfolio-app:.*|image: registry.joysontech.com/library/portfolio-app:$IMAGE_TAG|" k8s/deployment.yaml
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+          trivy image --image-src remote --exit-code 1 --severity CRITICAL,HIGH --no-progress $IMAGE:$IMAGE_TAG
 
-      - name: Commit updated image tag
+      - name: Checkout ArgoCD repo
+        uses: actions/checkout@v4
+        with:
+          repository: joyson-fernandes/ArgoCD
+          token: ${{ secrets.ARGOCD_REPO_TOKEN }}
+          path: argocd-repo
+
+      - name: Update image tag in ArgoCD manifest
+        run: |
+          sed -i "s|image: ghcr.io/joyson-fernandes/portfolio-website:.*|image: ghcr.io/joyson-fernandes/portfolio-website:$IMAGE_TAG|" argocd-repo/manifests/portfolio/portfolio.yaml
+
+      - name: Commit and push updated image tag
+        working-directory: argocd-repo
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add k8s/deployment.yaml
+          git add manifests/portfolio/portfolio.yaml
           git diff --cached --quiet && echo "No changes to commit" || \
-            git commit -m "deploy: update image to portfolio-app:$IMAGE_TAG [skip ci]"
+            git commit -m "deploy: update portfolio image to $IMAGE_TAG [skip ci]"
           git push
