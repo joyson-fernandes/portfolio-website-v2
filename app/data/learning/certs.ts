@@ -7,6 +7,7 @@ export interface CertMeta {
   durationMinutes: number
   passThreshold: number
   available: boolean
+  badgeUrl?: string
 }
 
 export const CERTS: CertMeta[] = [
@@ -19,6 +20,7 @@ export const CERTS: CertMeta[] = [
     durationMinutes: 50,
     passThreshold: 75,
     available: true,
+    badgeUrl: 'https://images.credly.com/images/7219d055-4e97-439c-b244-8fbe885fa06b/image.png',
   },
   {
     id: 'capa',
@@ -29,6 +31,7 @@ export const CERTS: CertMeta[] = [
     durationMinutes: 50,
     passThreshold: 75,
     available: true,
+    badgeUrl: 'https://images.credly.com/images/12624f9e-6b4a-43f0-b7a2-afb2c6cf8059/image.png',
   },
   {
     id: 'kcna',

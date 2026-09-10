@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import type { CertMeta } from '@/data/learning/certs'
@@ -23,15 +24,27 @@ export default function CertCard({ cert, index }: CertCardProps) {
         <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-violet-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       )}
       <div className="relative z-10">
-        <div
-          className={`w-12 h-12 rounded-xl flex items-center justify-center font-mono font-bold text-xs mb-4 ${
-            cert.available
-              ? 'bg-gradient-to-br from-blue-500/15 to-violet-500/15 border border-violet-500/25 text-blue-300'
-              : 'bg-secondary border border-border text-muted-foreground'
-          }`}
-        >
-          {cert.shortName}
-        </div>
+        {cert.badgeUrl ? (
+          <div className="w-16 h-16 mb-4 relative">
+            <Image
+              src={cert.badgeUrl}
+              alt={`${cert.name} badge`}
+              fill
+              sizes="64px"
+              className="object-contain"
+            />
+          </div>
+        ) : (
+          <div
+            className={`w-12 h-12 rounded-xl flex items-center justify-center font-mono font-bold text-xs mb-4 ${
+              cert.available
+                ? 'bg-gradient-to-br from-blue-500/15 to-violet-500/15 border border-violet-500/25 text-blue-300'
+                : 'bg-secondary border border-border text-muted-foreground'
+            }`}
+          >
+            {cert.shortName}
+          </div>
+        )}
         <h3 className="text-lg font-bold mb-1">{cert.name}</h3>
         <p className="text-sm text-muted-foreground mb-4 min-h-[2.5rem]">{cert.description}</p>
         {cert.available ? (
