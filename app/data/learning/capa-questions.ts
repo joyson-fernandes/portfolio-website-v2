@@ -196,4 +196,199 @@ export const CAPA_QUESTIONS: Question[] = [
     explanation:
       'This is the core value of tying AnalysisTemplates to a Rollout: a failed analysis run (metrics breaching the defined failure condition) triggers an automatic abort, shifting traffic back to the last known-good (stable) ReplicaSet without waiting for a human to notice.',
   },
+  {
+    id: 'capa-16',
+    question: 'What is the purpose of Argo Workflows\' `retryStrategy` field on a template?',
+    options: [
+      'It automatically retries a failed step/task up to a configured limit, optionally with a backoff policy, instead of failing the whole workflow on the first error',
+      'It controls how many times a workflow can be manually resubmitted by a user',
+      'It retries only successful steps to verify idempotency',
+      'It is used exclusively for retrying artifact uploads, not step execution',
+    ],
+    correctIndex: 0,
+    explanation:
+      '`retryStrategy` (with `limit` and optional `backoff`) lets a step/task retry automatically on failure — useful for transient errors like a flaky network call — instead of the whole workflow failing on the first attempt.',
+  },
+  {
+    id: 'capa-17',
+    question: 'What does a `suspend` template (or a manual suspend point) do in an Argo Workflow?',
+    options: [
+      'It pauses execution of the workflow, either indefinitely or for a duration, until manually resumed or the duration elapses — commonly used for manual approval gates',
+      'It permanently cancels the workflow',
+      'It suspends only the workflow controller, not the individual workflow',
+      'It is used to pause artifact garbage collection',
+    ],
+    correctIndex: 0,
+    explanation:
+      'A suspend template halts the workflow at that point, waiting for `argo resume` (or an automatic duration timeout) before continuing — the standard way to insert a manual approval gate into an otherwise automated pipeline.',
+  },
+  {
+    id: 'capa-18',
+    question: 'In Argo Rollouts, what is a `TrafficRouting` configuration used for?',
+    options: [
+      'It defines which service mesh or ingress controller (e.g. Istio, NGINX, ALB, SMI) Argo Rollouts should configure to actually split live traffic between the stable and canary versions at the specified weights',
+      'It only controls DNS resolution for the Rollout',
+      'It is required even when no traffic splitting is needed',
+      'It replaces the need for a Kubernetes Service entirely',
+    ],
+    correctIndex: 0,
+    explanation:
+      'Without a TrafficRouting integration, Argo Rollouts approximates canary weights by scaling ReplicaSet replica counts. With one configured (Istio VirtualService, NGINX Ingress annotations, ALB target groups, SMI, etc.), it precisely controls the percentage of real traffic hitting each version.',
+  },
+  {
+    id: 'capa-19',
+    question: 'What is the role of the `experiment` (Argo Rollouts `Experiment` CRD) resource?',
+    options: [
+      'It runs one or more short-lived ReplicaSets alongside the stable version to gather metrics or run a comparison (e.g. A/B testing) without affecting the main rollout progression, then tears them down',
+      'It replaces AnalysisTemplates entirely',
+      'It is only used during initial cluster setup',
+      'It permanently replaces the stable version once started',
+    ],
+    correctIndex: 0,
+    explanation:
+      'An `Experiment` spins up one or more temporary ReplicaSet variants (optionally with their own AnalysisRuns) for a fixed duration to gather comparative data — useful for A/B testing or baseline-vs-candidate metric comparison — independent of a Rollout\'s main progression.',
+  },
+  {
+    id: 'capa-20',
+    question: 'What does the Argo Workflows `withItems` (or `withParam`) field enable on a template step?',
+    options: [
+      'Running the same template multiple times in parallel, once per item in a provided list (or dynamically generated list via withParam), effectively a fan-out loop',
+      'Importing external Helm charts into a workflow',
+      'Limiting a template to a single execution only',
+      'Declaring the workflow\'s RBAC ServiceAccount',
+    ],
+    correctIndex: 0,
+    explanation:
+      '`withItems` (a static list) or `withParam` (a dynamically computed JSON list, often from a prior step\'s output) causes Argo Workflows to instantiate that step once per list item, running them in parallel — the standard fan-out mechanism.',
+  },
+  {
+    id: 'capa-21',
+    question: 'What is the difference between an Argo Events `EventSource` and a `Sensor`\'s `dependencies` field?',
+    options: [
+      'An EventSource defines where events come from (the producer); a Sensor\'s dependencies list which of those published events (and how many/which combination) it needs to see before firing its trigger',
+      'They are the same concept with different YAML syntax',
+      'EventSource is deprecated in favor of dependencies',
+      'Dependencies define which other Sensors must run first',
+    ],
+    correctIndex: 0,
+    explanation:
+      'EventSource is the producer side (webhook, S3, calendar, etc.), publishing named events onto the EventBus. A Sensor\'s `dependencies` name which of those events it cares about, and its trigger conditions can require one, several, or all of them (via `circuit` logic) before firing.',
+  },
+  {
+    id: 'capa-22',
+    question: 'Why might a team choose Argo Rollouts\' `blueGreen` strategy specifically for a database-migration-heavy deployment, over `canary`?',
+    options: [
+      'Because blue-green requires no traffic routing configuration',
+      'Because blue-green fully validates the new version (including running a full smoke test suite against the "preview" service) before any production traffic reaches it at all, whereas canary exposes real users to the new version from the very first step',
+      'Because canary strategies cannot use AnalysisTemplates',
+      'Because blue-green is faster to complete than canary in all cases',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Blue-green keeps the new version fully isolated behind a preview Service until it\'s explicitly promoted, so you can run thorough validation (including a `prePromotionAnalysis`) with zero real-user exposure first — appealing when a bad deploy (e.g. a broken migration) would be costly, versus canary which by design exposes some live traffic immediately.',
+  },
+  {
+    id: 'capa-23',
+    question: 'What does Argo CD\'s `Application` `spec.source.helm.valueFiles` field do when using a Helm chart source?',
+    options: [
+      'It lists additional Helm values files to layer on top of the chart\'s default values.yaml during templating',
+      'It defines which Kubernetes namespace the release is installed into',
+      'It specifies the Helm binary version to use',
+      'It is only used for OCI-based chart repositories',
+    ],
+    correctIndex: 0,
+    explanation:
+      '`valueFiles` points at one or more additional values files (often environment-specific, e.g. `values-prod.yaml`) that get merged on top of the chart\'s own defaults during `helm template` rendering, letting one chart source serve multiple environments.',
+  },
+  {
+    id: 'capa-24',
+    question: 'What is the purpose of the `analysis` step type available directly within an Argo Workflows DAG or steps template (distinct from Argo Rollouts\' own AnalysisTemplate)?',
+    options: [
+      'Argo Workflows has no native analysis step type — AnalysisTemplate/AnalysisRun are Argo Rollouts-specific CRDs, not part of core Argo Workflows',
+      'It is identical in both projects and fully interchangeable',
+      'It only exists in Argo Events',
+      'It replaces the need for a workflow controller in Rollouts',
+    ],
+    correctIndex: 0,
+    explanation:
+      "This is a common point of confusion: AnalysisTemplate/AnalysisRun/Experiment are Argo Rollouts CRDs used for progressive-delivery metric checks. Argo Workflows itself has no equivalent built-in construct — the two projects share the broader Argo ecosystem but have distinct CRDs for distinct purposes.",
+  },
+  {
+    id: 'capa-25',
+    question: 'A Sensor has two dependencies (event A and event B) and its trigger `conditions` field is set to `"A && B"`. What does this mean?',
+    options: [
+      'The trigger fires as soon as either A or B occurs',
+      'The trigger only fires once both event A and event B have occurred (within the applicable time window), not on either alone',
+      'The Sensor will fail to start unless both events are pre-registered',
+      'This syntax is invalid; conditions can only reference a single dependency',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Sensor trigger `conditions` support boolean logic across named dependencies. `"A && B"` requires both named events to have occurred before the trigger executes, letting a Sensor wait for multiple, potentially unrelated event sources to align before acting.',
+  },
+  {
+    id: 'capa-26',
+    question: 'What does Argo CD\'s `resource.customizations` (health check) configuration allow you to do?',
+    options: [
+      'Define a custom Lua script to determine the Health Status of a resource kind Argo CD doesn\'t natively understand (e.g. a custom CRD), since Argo CD can\'t infer health for arbitrary resource types out of the box',
+      'Change the CPU/memory resource requests applied to a Deployment',
+      'Override which namespace a resource is created in',
+      'Disable health checks entirely for the whole cluster',
+    ],
+    correctIndex: 0,
+    explanation:
+      'Argo CD ships built-in health logic for common Kubernetes kinds (Deployment, StatefulSet, Ingress, etc.), but has no way to know what "healthy" means for an arbitrary custom resource. `resource.customizations` lets you supply a Lua script that inspects the CR\'s status fields and returns a Health Status, so Argo CD can report meaningful health for CRDs.',
+  },
+  {
+    id: 'capa-27',
+    question: 'What is the effect of setting `activeDeadlineSeconds` on an Argo Workflow or template?',
+    options: [
+      'It sets a maximum runtime after which the workflow/step is forcibly terminated and marked as failed, guarding against a hung step blocking the pipeline indefinitely',
+      'It delays the start of the workflow by the given number of seconds',
+      'It controls how long completed workflow objects are retained before garbage collection',
+      'It sets the polling interval for the workflow controller',
+    ],
+    correctIndex: 0,
+    explanation:
+      '`activeDeadlineSeconds` is a timeout: if the workflow or the specific template it\'s set on runs longer than that many seconds, Argo Workflows kills it and marks it Failed — protecting against a stuck step (e.g. a hung network call) blocking the pipeline forever.',
+  },
+  {
+    id: 'capa-28',
+    question: 'Why would an Argo CD Application use `spec.source.directory.recurse: true`?',
+    options: [
+      'To also apply plain Kubernetes manifest YAML files found in subdirectories of the configured path, not just files directly in it',
+      'To automatically recurse into and sync every other Application in the cluster',
+      'To enable automatic namespace creation',
+      'It has no effect when using plain YAML manifests',
+    ],
+    correctIndex: 0,
+    explanation:
+      'By default, a directory-type Application source only picks up manifests directly in the configured `path`. `recurse: true` tells Argo CD to also walk and include YAML files in nested subdirectories.',
+  },
+  {
+    id: 'capa-29',
+    question: 'What problem does Argo Rollouts\' `scaleDownDelaySeconds` (on the old/stable ReplicaSet during blue-green) solve?',
+    options: [
+      'It keeps the previous stable ReplicaSet running for a grace period after promotion instead of scaling it to zero immediately, so an instant rollback (by re-pointing the active Service) is still possible without a cold start',
+      'It delays how long it takes for the new version to receive its first request',
+      'It controls how quickly the canary weight increases between steps',
+      'It has no functional purpose beyond logging',
+    ],
+    correctIndex: 0,
+    explanation:
+      'Without this delay, the old ReplicaSet would scale to zero the moment the new version is promoted, meaning a rollback would need to cold-start pods again. `scaleDownDelaySeconds` keeps the previous version warm for a window after cutover, so reverting the active Service selector is an instant, low-risk operation.',
+  },
+  {
+    id: 'capa-30',
+    question: 'What does Argo Events\' `filter` field on an EventSource or Sensor dependency do?',
+    options: [
+      'It rejects/accepts incoming events based on conditions applied to the event payload (e.g. only accept a webhook event if a specific JSON field matches a value), before the event reaches the trigger logic',
+      'It controls network firewall rules for the EventBus',
+      'It filters which Kubernetes namespaces the Sensor can create resources in',
+      'It is only used to filter which users can view the EventSource in the UI',
+    ],
+    correctIndex: 0,
+    explanation:
+      "Filters let you inspect the actual event body/context (e.g. a GitHub webhook payload) and only let matching events through — for example, only triggering a workflow when a webhook's payload shows the push was to the `main` branch, ignoring pushes to other branches.",
+  },
 ]
