@@ -1,0 +1,64 @@
+name: Promote to Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Image tag to promote (the short SHA from a dev deploy)"
+        required: true
+        type: string
+
+env:
+  IMAGE_NAME: ghcr.io/joyson-fernandes/portfolio-website
+
+jobs:
+  promote:
+    runs-on: portfolio-k8s
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Verify tag exists in GHCR
+        run: |
+          curl -sSf -o /dev/null \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            "https://ghcr.io/v2/joyson-fernandes/portfolio-website/manifests/${{ inputs.tag }}" \
+            || (echo "::error::Tag ${{ inputs.tag }} not found in $IMAGE_NAME" && exit 1)
+
+      - name: Update ArgoCD repository (production)
+        env:
+          ARGOCD_TOKEN: ${{ secrets.ARGOCD_REPO_TOKEN }}
+        run: |
+          git clone \
+            https://x-access-token:${ARGOCD_TOKEN}@github.com/joyson-fernandes/ArgoCD.git \
+            argocd-repo
+
+          cd argocd-repo
+
+          echo "Promoting production image to:"
+          echo "$IMAGE_NAME:${{ inputs.tag }}"
+
+          sed -i \
+            "s|image: ghcr.io/joyson-fernandes/portfolio-website:.*|image: ghcr.io/joyson-fernandes/portfolio-website:${{ inputs.tag }}|" \
+            manifests/portfolio/portfolio.yaml
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add manifests/portfolio/portfolio.yaml
+
+          if git diff --cached --quiet; then
+            echo "No image change"
+            exit 0
+          fi
+
+          git commit -m "deploy: promote portfolio ${{ inputs.tag }} to production [skip ci]"
+          git push origin main
+
+      - name: Summary
+        run: |
+          echo "## 🚀 Promoted to Production" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Image:** \`$IMAGE_NAME:${{ inputs.tag }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Live:** https://joysonfernandes.com" >> "$GITHUB_STEP_SUMMARY"

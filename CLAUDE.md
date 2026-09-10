@@ -10,10 +10,10 @@ Personal portfolio website for Joyson Fernandes — Platform & DevOps Engineer.
 
 ## Infrastructure
 
-- **K8s namespace:** `portfolio`
-- **Image:** `ghcr.io/joyson-fernandes/portfolio-website` (public package, no imagePullSecret needed)
-- **Domain:** `joysonfernandes.com` via Traefik IngressRoute + cert-manager TLS
-- **ArgoCD:** managed as `portfolio` app in the separate **`joyson-fernandes/ArgoCD`** repo (`~/ArgoCD` locally) — `apps/portfolio.yaml` points at `manifests/portfolio/portfolio.yaml` in that same repo. This repo (`portfolio-website-v2`) does **not** contain the deployed manifests — there is no `k8s/` directory. Auto-sync enabled, GitHub webhook for instant sync.
+- **K8s namespaces:** `portfolio` (production), `portfolio-dev` (dev)
+- **Image:** `ghcr.io/joyson-fernandes/portfolio-website` (public package, linked to this repo — no imagePullSecret needed)
+- **Domains:** `joysonfernandes.com` (production), `dev.joysonfernandes.com` (dev) — both via Traefik IngressRoute + cert-manager TLS
+- **ArgoCD:** managed in the separate **`joyson-fernandes/ArgoCD`** repo (`~/ArgoCD` locally) — `apps/portfolio.yaml` → `manifests/portfolio/portfolio.yaml` (prod), `apps/portfolio-dev.yaml` → `manifests/portfolio-dev/portfolio-dev.yaml` (dev). This repo (`portfolio-website-v2`) does **not** contain the deployed manifests — there is no `k8s/` directory. Auto-sync enabled, GitHub webhook for instant sync.
 - **ArgoCD URL:** https://argocd.joysontech.com
 - **Grafana URL:** https://grafana.joysontech.com (Public org with anonymous read-only access for portfolio embeds)
 - **CI:** GitHub Actions, self-hosted runner pods in-cluster via Actions Runner Controller (ARC) — scale set `portfolio-k8s` in namespace `arc-runners`. Controller and runner scale set are deployed via ArgoCD from the `joyson-fernandes/ArgoCD` repo (`apps/arc-controller.yaml`, `apps/arc-runner-portfolio.yaml`, `apps/arc-runner-rbac.yaml`, manifests under `manifests/arc-runner-rbac/`)
@@ -21,11 +21,13 @@ Personal portfolio website for Joyson Fernandes — Platform & DevOps Engineer.
 
 ## CI Pipeline
 
-- **Production (push to main):** GitHub Actions on `portfolio-k8s` runner → `docker buildx` (kubernetes driver, amd64 only — cluster has no arm64 nodes) → push to GHCR (tag = short SHA, plus `:latest`) → Trivy scan (`--image-src remote`, no daemon needed) → clone `joyson-fernandes/ArgoCD`, bump the image tag in `manifests/portfolio/portfolio.yaml`, commit + push `[skip ci]` → ArgoCD syncs via webhook
+- **Dev (push to main, `ci.yaml`):** GitHub Actions on `portfolio-k8s` runner → `docker buildx` (kubernetes driver, amd64 only — cluster has no arm64 nodes) → push to GHCR (tag = short SHA, plus `:latest`) → Trivy scan (`--image-src remote`, no daemon needed) → clone `joyson-fernandes/ArgoCD`, bump the image tag in `manifests/portfolio-dev/portfolio-dev.yaml`, commit + push `[skip ci]` → ArgoCD syncs → live at dev.joysonfernandes.com within ~webhook delay
+- **Production (manual, `promote-prod.yaml`):** `workflow_dispatch` with a `tag` input (the short SHA a dev deploy printed in its job summary) → verifies that tag exists in GHCR → bumps `manifests/portfolio/portfolio.yaml` in the ArgoCD repo → same image, no rebuild. Run from the Actions tab → "Promote to Production" → Run workflow, after checking dev looks right.
 - **PR Preview:** build + push (tag = `pr-<PR#>`) + Trivy scan only — no live preview deployment
 - **No Docker daemon on runners** — pods have no privileged DinD. Each job installs the `docker` CLI + `buildx` plugin (no daemon) and runs `docker buildx create --driver kubernetes` to spin up an on-demand rootless BuildKit builder pod in `arc-runners`
-- **Runner RBAC:** the `portfolio-k8s` scale set runs as `arc-runner-portfolio` ServiceAccount, granted a namespaced Role in `arc-runners` for `pods` + `pods/exec,log,portforward` — just enough for the buildx kubernetes driver to manage its builder pod
+- **Runner RBAC:** the `portfolio-k8s` scale set runs as `arc-runner-portfolio` ServiceAccount, granted a namespaced Role in `arc-runners` for `pods` + `pods/exec,log,portforward` + `deployments`/`replicasets` — what the buildx kubernetes driver needs to manage its builder Deployment
 - **Secrets needed:** repo secret `ARGOCD_REPO_TOKEN` — a PAT with write access to `joyson-fernandes/ArgoCD` (the built-in `GITHUB_TOKEN` can't push cross-repo). `GITHUB_TOKEN` alone covers the GHCR push (`permissions: packages: write`).
+- **GHCR gotcha:** if the package ever shows `permission_denied: write_package` again, it likely got re-created by a manual `docker push` and lost its repo link — delete the package and let CI recreate it (auto-links correctly on first push from Actions).
 
 ## Build Notes
 
