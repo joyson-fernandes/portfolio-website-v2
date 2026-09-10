@@ -15,6 +15,7 @@ const NAV_ITEMS = [
   { label: 'Experience', href: '#experience' },
   { label: 'Certifications', href: '#certifications' },
   { label: 'Homelab', href: '/homelab', isPage: true },
+  { label: 'Learning', href: '/learning', isPage: true },
 ]
 
 export default function Navigation() {
