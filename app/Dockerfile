@@ -39,6 +39,11 @@ ENV NEXT_TELEMETRY_DISABLED 1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
+# The runtime only ever runs `node app/server.js` — npm (and its bundled
+# deps like pacote/sigstore/tar, a recurring source of Trivy CVEs) is
+# build-tooling with no reason to ship in the runtime image.
+RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack
+
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 # standalone output nests under app/ due to outputFileTracingRoot: ../
