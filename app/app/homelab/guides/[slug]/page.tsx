@@ -11,14 +11,15 @@ import HomelabNavigation from '@/components/layout/homelab-navigation'
 import Footer from '@/components/sections/footer'
 
 interface PageProps {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
 export async function generateStaticParams() {
   return getGuideSlugs().map((slug) => ({ slug }))
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata(props: PageProps): Promise<Metadata> {
+  const params = await props.params;
   const guide = getGuideBySlug(params.slug)
   if (!guide) return { title: 'Guide Not Found' }
 
@@ -35,7 +36,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 }
 
-export default function GuidePage({ params }: PageProps) {
+export default async function GuidePage(props: PageProps) {
+  const params = await props.params;
   const guide = getGuideBySlug(params.slug)
   if (!guide) notFound()
 
