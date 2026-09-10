@@ -391,4 +391,329 @@ export const CAPA_QUESTIONS: Question[] = [
     explanation:
       "Filters let you inspect the actual event body/context (e.g. a GitHub webhook payload) and only let matching events through — for example, only triggering a workflow when a webhook's payload shows the push was to the `main` branch, ignoring pushes to other branches.",
   },
+  {
+    id: 'capa-31',
+    question: "What is the purpose of an Argo CD `AppProject` (as distinct from an `Application`)?",
+    options: [
+      'It scopes and restricts what a group of Applications is allowed to do — permitted source repos, destination clusters/namespaces, resource kinds, and RBAC roles — providing multi-tenant guardrails rather than deploying anything itself',
+      'It is a synonym for an Application with a different YAML kind',
+      'It replaces the need for Applications entirely',
+      'It only controls the color/label shown for an Application in the UI',
+    ],
+    correctIndex: 0,
+    explanation:
+      "AppProject is Argo CD's multi-tenancy boundary: it whitelists allowed source repositories, destination cluster/namespace pairs, permitted/denied resource kinds (cluster-scoped vs namespaced), and defines roles with fine-grained RBAC — letting a platform team safely let different teams manage their own Applications without full admin access.",
+  },
+  {
+    id: 'capa-32',
+    question: "Within an AppProject, what does the `roles` field enable?",
+    options: [
+      'Defining named roles scoped to that specific project, each with its own RBAC policy (e.g. sync-only, read-only) and JWT tokens, so access can be granted per-project rather than only via global Argo CD RBAC',
+      'Defining which Kubernetes RBAC ClusterRoles exist in the cluster',
+      'It controls only the UI theme per project',
+      'It is used exclusively to name the project, with no functional effect',
+    ],
+    correctIndex: 0,
+    explanation:
+      "AppProject roles let you grant scoped permissions (e.g. `sync` but not `delete`) to a project-specific role, and issue that role a JWT token for CI/automation use — enabling per-team, per-project access control layered on top of (or instead of) global Argo CD RBAC.",
+  },
+  {
+    id: 'capa-33',
+    question: "What is restricted by an AppProject's `sourceRepos` and `destinations` fields?",
+    options: [
+      'sourceRepos restricts which Git/Helm repositories Applications in this project may pull from; destinations restricts which cluster+namespace combinations they may deploy into — together preventing a project\'s Applications from deploying arbitrary code to arbitrary places',
+      'They control only cosmetic filtering in the Argo CD UI with no enforcement',
+      'sourceRepos restricts container registries; destinations restricts Git branches',
+      'They apply only to Applications using Helm, not Kustomize or plain YAML',
+    ],
+    correctIndex: 0,
+    explanation:
+      "These are the core tenancy guardrails: an Application whose source repo isn't in the project's `sourceRepos` allowlist, or whose destination cluster/namespace isn't in `destinations`, is rejected — stopping a team's project from being (mis)used to deploy untrusted sources or reach clusters/namespaces outside its remit.",
+  },
+  {
+    id: 'capa-34',
+    question: "What are the core components of Argo CD's architecture?",
+    options: [
+      'A single monolithic binary with no internal separation of concerns',
+      'The API server (serves the UI/CLI/API), the repo server (fetches and renders manifests from Git/Helm/Kustomize sources), and the application controller (runs the reconciliation loop, comparing live vs desired state and applying syncs)',
+      'Only a CLI tool with no server-side components',
+      'A single controller that also functions as the Kubernetes API server',
+    ],
+    correctIndex: 1,
+    explanation:
+      "Argo CD splits responsibilities: the API server handles auth and serves the UI/CLI/gRPC API; the repo server clones/renders manifests from the configured source (Git, Helm, Kustomize); and the application controller continuously diffs live cluster state against the rendered manifests and drives syncs — each can be scaled/restarted independently.",
+  },
+  {
+    id: 'capa-35',
+    question: 'What does Argo CD\'s "Application controller" component specifically do?',
+    options: [
+      'It renders Helm templates into raw YAML, nothing else',
+      'It runs the core reconciliation loop: watching Applications, comparing live cluster state to the desired manifests, computing sync/health status, and executing sync operations',
+      'It only serves the web UI static assets',
+      'It stores encrypted secrets on behalf of the cluster',
+    ],
+    correctIndex: 1,
+    explanation:
+      "The application controller is the heart of Argo CD's reconciliation model — it watches Application CRs, diffs live vs desired state (using data fetched via the repo server), determines Sync/Health status, and triggers sync operations, whether manual or automated.",
+  },
+  {
+    id: 'capa-36',
+    question: 'What is the practical difference between a "non-HA" and an "HA" (high availability) Argo CD installation option?',
+    options: [
+      'They are functionally identical, differing only in the install manifest filename',
+      'The HA manifests run multiple replicas of the core components (with Redis in HA mode) to tolerate a pod/node failure without downtime, while the non-HA manifests run single replicas suitable for smaller or non-critical environments',
+      'Non-HA installs cannot use Git as a source',
+      'HA installs require a completely separate product license',
+    ],
+    correctIndex: 1,
+    explanation:
+      "Argo CD ships separate install manifests for standard (single-replica) and HA (multi-replica core components plus a Redis HA setup) deployments — the HA variant tolerates individual pod or node failures without an outage, at the cost of more resource usage, which is why smaller/dev environments often use the non-HA manifests instead.",
+  },
+  {
+    id: 'capa-37',
+    question: "What determines Argo CD's default polling interval for detecting new Git commits when no webhook is configured?",
+    options: [
+      'It never polls; webhooks are mandatory',
+      "Argo CD has a built-in default reconciliation/poll interval (commonly every 3 minutes) at which the repo server re-checks the configured Git source for new commits, independent of any webhook",
+      'It polls exactly once per day regardless of configuration',
+      'The poll interval is determined by the Kubernetes cluster\'s API server QPS setting',
+    ],
+    correctIndex: 1,
+    explanation:
+      "Without a webhook, Argo CD still periodically re-fetches the Git source on a default interval (roughly every 3 minutes) so it eventually notices new commits — a webhook simply shortens that delay from 'up to one poll interval' down to near-immediate.",
+  },
+  {
+    id: 'capa-38',
+    question: 'How does Argo CD compute the Health Status of a resource kind it has no built-in understanding of, absent a custom health check?',
+    options: [
+      'It always reports such resources as Healthy by default with no further logic',
+      'It reports the resource\'s health as "Unknown" or "Missing" style status by default, since Argo CD has no rule for interpreting that kind\'s status fields — this is exactly the gap `resource.customizations` health-check scripts are meant to fill',
+      'It refuses to sync any Application containing an unrecognized resource kind',
+      'It queries an external SaaS service to determine health for unknown kinds',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Argo CD\'s built-in health logic only covers well-known kinds (Deployment, StatefulSet, Ingress, Job, etc.). For a custom or unrecognized kind with no health check defined, it cannot infer whether the resource is actually "working," which is why teams write a Lua-based custom health check via `resource.customizations` for their own CRDs.',
+  },
+  {
+    id: 'capa-39',
+    question: 'What is the difference between the "Types of Sync Strategies" auto-sync (with prune/selfHeal) and simply running `argocd app sync` manually on a repeating schedule (e.g. via cron)?',
+    options: [
+      'They behave identically in every respect',
+      'Auto-sync with selfHeal reacts immediately to detected drift or new commits as part of Argo CD\'s continuous reconciliation loop; a cron-triggered manual sync only catches drift at the next scheduled run, leaving a window where the live state can silently diverge from Git',
+      'A cron-triggered manual sync can never fail',
+      'Auto-sync requires disabling the application controller',
+      ],
+    correctIndex: 1,
+    explanation:
+      "Auto-sync is event-driven and continuous — the application controller reacts as soon as it observes drift or a new Git commit. A cron-based manual sync only checks at fixed intervals, so drift can persist un-corrected for up to the full interval between runs, which is a meaningfully different reliability guarantee.",
+  },
+  {
+    id: 'capa-40',
+    question: "What does Argo CD's `spec.source.helm.parameters` field let you do that `valueFiles` alone does not?",
+    options: [
+      'Override individual Helm chart values directly and inline in the Application manifest (equivalent to `--set key=value` on the CLI), without needing to maintain a separate values file for small, Application-specific overrides',
+      'It has the exact same effect as valueFiles and exists only for backward compatibility',
+      'It can only be used for OCI-based Helm charts',
+      'It changes which Kubernetes API version the chart targets',
+    ],
+    correctIndex: 0,
+    explanation:
+      "`helm.parameters` is the Application-manifest equivalent of `helm install --set`, letting you override specific values inline without authoring a whole extra values file — handy for one-off, per-Application overrides layered on top of whatever `valueFiles` already provide.",
+  },
+  {
+    id: 'capa-41',
+    question: "In ApplicationSet, what does the `cluster` generator produce, and what is it typically used for?",
+    options: [
+      'It generates one set of parameters per Argo CD-registered cluster (matching an optional label selector), commonly used to deploy the same Application to every cluster in a fleet without manually authoring one Application per cluster',
+      'It generates a new physical Kubernetes cluster on demand',
+      'It only works with a single cluster and cannot fan out',
+      'It replaces the need for the Argo CD API server',
+    ],
+    correctIndex: 0,
+    explanation:
+      "The `cluster` generator iterates over clusters already registered with Argo CD (optionally filtered by label selector) and produces one parameter set per matching cluster — the standard way to roll the same Application definition out across many clusters from a single ApplicationSet.",
+  },
+  {
+    id: 'capa-42',
+    question: "What does the `git` generator (directories or files mode) in ApplicationSet produce?",
+    options: [
+      'One parameter set per matching directory (or per matching JSON/YAML file) found in a Git repository, letting the ApplicationSet automatically pick up new Applications as new directories/files are added to the repo',
+      'It clones every branch of the repository into a separate cluster',
+      'It only detects changes to a single hardcoded file',
+      'It generates parameters based on GitHub Issues, not repository content',
+    ],
+    correctIndex: 0,
+    explanation:
+      "The git generator scans a repo for directories (or specific files) matching a glob pattern and emits one parameter set per match — so adding a new environment/service directory to the repo is enough for the ApplicationSet to render a new Application on the next generator refresh, with zero manual Application authoring.",
+  },
+  {
+    id: 'capa-43',
+    question: 'What does the `matrix` generator combine in ApplicationSet?',
+    options: [
+      'The outputs of two (or more) other generators, producing the cartesian product of their parameter sets — e.g. combining a `cluster` generator with a `git` generator to deploy every app-directory to every cluster',
+      'It merges the CPU and memory matrices of every node in the cluster',
+      'It can only combine two `list` generators and nothing else',
+      'It has no relation to other generators and works standalone',
+    ],
+    correctIndex: 0,
+    explanation:
+      "`matrix` takes two or more child generators and produces every combination of their outputs — for example, crossing a `git` generator (one entry per service directory) with a `cluster` generator (one entry per cluster) to deploy every service to every cluster from a single ApplicationSet.",
+  },
+  {
+    id: 'capa-44',
+    question: "What is the role of the Argo Workflows `workflow-controller` versus the `argo-server` component?",
+    options: [
+      'They are the same component under two different names',
+      'The workflow-controller watches Workflow CRs and orchestrates pod creation/execution per the DAG/steps definition; the argo-server exposes the API, UI, and CLI-facing gRPC/REST interface, and can also handle webhook-triggered workflow submission',
+      'The argo-server executes all workflow steps directly with no pods involved',
+      'The workflow-controller is only used for RBAC, not execution',
+    ],
+    correctIndex: 1,
+    explanation:
+      "Argo Workflows splits execution (workflow-controller: reconciles Workflow objects, creates and manages the pods for each step/task per the DAG/steps graph) from the user-facing surface (argo-server: UI, REST/gRPC API, and CLI backend, including things like SSO and webhook endpoints).",
+  },
+  {
+    id: 'capa-45',
+    question: "What is the difference between a `container` template type and a `script` template type in Argo Workflows?",
+    options: [
+      'A `container` template runs an arbitrary container image with its own command/args; a `script` template is a convenience wrapper that runs an inline script body (e.g. Python, Bash) inside a specified image without needing a separate ConfigMap or built image containing that script',
+      'They are functionally identical, differing only in YAML field name',
+      'script templates cannot specify a container image',
+      'container templates cannot pass parameters',
+    ],
+    correctIndex: 0,
+    explanation:
+      "`script` is syntactic sugar over `container`: you write the script body inline in the template, and Argo Workflows handles saving it to a file and executing it inside the given image — avoiding needing to bake the script into a custom image or mount it via a ConfigMap just to run a short snippet.",
+  },
+  {
+    id: 'capa-46',
+    question: 'What does a `containerSet` template allow that a plain `steps`/`dag` of separate `container` templates does not?',
+    options: [
+      'Running multiple containers within a single pod (optionally with explicit inter-container dependencies via `dependencies`), sharing the pod\'s volumes/network directly rather than each step getting its own pod',
+      'It has no meaningful difference from separate container templates',
+      'It can only run a single container, same as a plain container template',
+      'It replaces the need for a workflow controller entirely',
+    ],
+    correctIndex: 0,
+    explanation:
+      "Normally each step in a `steps`/`dag` template gets its own pod. `containerSet` instead runs multiple containers together within one pod (with optional per-container `dependencies` for ordering), useful when steps need to share a pod's local filesystem/network without artifact-passing overhead.",
+  },
+  {
+    id: 'capa-47',
+    question: "What is a Workflow-level (as opposed to template-level) `parameter` typically used for?",
+    options: [
+      'It has no functional purpose and is purely documentation',
+      'Defining input values that configure the whole Workflow run (e.g. an image tag or environment name), which can then be referenced throughout multiple templates in that Workflow via `{{workflow.parameters.<name>}}`',
+      'It can only be set after the workflow has already completed',
+      'It only affects the workflow\'s display name in the UI',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Workflow-level parameters (`spec.arguments.parameters`) are the run-wide inputs supplied at submission time (e.g. via `argo submit -p key=value`), referenceable from any template in that run — distinct from template-level `inputs.parameters`, which are scoped to a single template invocation.',
+  },
+  {
+    id: 'capa-48',
+    question: "What does the `when` field on an Argo Workflows step/task enable?",
+    options: [
+      'Conditionally skipping that step/task based on an expression (often referencing a prior step\'s output or a parameter), so the step only executes if the condition evaluates true',
+      'Setting a fixed wall-clock time at which the step must run',
+      'It can only reference the current date, nothing else',
+      'It permanently disables retries for that step',
+    ],
+    correctIndex: 0,
+    explanation:
+      '`when: "{{steps.some-step.outputs.result}} == success"` (or similar) lets a step/task be conditionally skipped based on runtime data — commonly a prior step\'s output — enabling simple branching logic within a Workflow without needing a full separate DAG per branch.',
+  },
+  {
+    id: 'capa-49',
+    question: 'What is a "daemoned" step/container in Argo Workflows used for?',
+    options: [
+      'Running a long-lived, background container (e.g. a test dependency like a database) alongside other steps for the duration they need it, rather than that container needing to complete before the workflow can proceed',
+      'It permanently daemonizes the workflow controller itself',
+      'It is a synonym for a completed, terminated step',
+      'It disables logging for that step',
+    ],
+    correctIndex: 0,
+    explanation:
+      "Marking a template `daemon: true` starts it as a background service that keeps running (e.g. a test database or mock API) while subsequent steps execute against it, without the workflow waiting for the daemon step itself to exit — Argo Workflows terminates it automatically once no longer needed.",
+  },
+  {
+    id: 'capa-50',
+    question: "In Argo Workflows DAG `depends` expressions, what does a dependency like `depends: \"step-a.Succeeded || step-a.Failed\"` achieve that a plain `depends: \"step-a\"` does not?",
+    options: [
+      'It has the exact same effect as a plain dependency',
+      'It explicitly runs the dependent task regardless of whether step-a succeeded or failed (as long as it reached a terminal state), whereas a plain dependency only proceeds if step-a succeeded',
+      'It causes step-a to run twice',
+      'It makes step-a a daemon container',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Enhanced `depends` expressions can reference specific task result states (`Succeeded`, `Failed`, `Errored`, `Skipped`) with boolean logic. A plain `depends: "step-a"` implicitly requires success; explicitly OR-ing `Succeeded || Failed` lets a cleanup/notification task run whether the prior task passed or failed, which a plain dependency cannot express.',
+  },
+  {
+    id: 'capa-51',
+    question: 'What does the `parallelism` field control when used with `withItems`/`withParam` fan-out in Argo Workflows?',
+    options: [
+      'The maximum number of concurrently running instances of that fanned-out step, capping resource usage even when the item list is much larger',
+      'The total number of items processed, silently dropping any beyond the limit',
+      'How many separate workflow controllers process the workflow',
+      'It has no effect on withItems/withParam loops',
+    ],
+    correctIndex: 0,
+    explanation:
+      'Without a `parallelism` limit, a `withItems`/`withParam` fan-out launches all instances at once, which can overwhelm cluster resources for a large item list. Setting `parallelism: N` caps how many run concurrently, queuing the rest until a slot frees up.',
+  },
+  {
+    id: 'capa-52',
+    question: "What is the relationship between Argo Rollouts' `Rollout` custom resource and a standard Kubernetes `Deployment`?",
+    options: [
+      'A Rollout is a drop-in replacement for a Deployment that adds progressive delivery strategies (canary, blue-green) and integrates with AnalysisTemplates/TrafficRouting, using nearly the same pod template spec but a different `strategy` block',
+      'Rollout and Deployment are unrelated resource types with no conceptual overlap',
+      'A Rollout can only be created by converting a StatefulSet, never a Deployment',
+      'Rollouts run entirely outside of Kubernetes, in a separate control plane',
+    ],
+    correctIndex: 0,
+    explanation:
+      "Argo Rollouts' `Rollout` CRD is deliberately similar to a Deployment (same pod template, selector, replicas) but replaces the plain rolling-update `strategy` with `canary`/`blueGreen` strategies that support step-based progression, analysis gates, and traffic-routing integrations that a native Deployment has no concept of.",
+  },
+  {
+    id: 'capa-53',
+    question: 'What does the Argo Rollouts controller do differently from the built-in Kubernetes Deployment controller when reconciling replicas?',
+    options: [
+      'Nothing — they use identical reconciliation logic',
+      'It manages ReplicaSet scaling according to the active progressive-delivery strategy (e.g. canary steps, blue-green promotion) and consults AnalysisRuns/TrafficRouting config, rather than the Deployment controller\'s simple rolling-update-percentage logic',
+      'It only ever scales replicas to zero or the full count, with no intermediate steps',
+      'It requires deleting the ReplicaSet on every reconciliation',
+    ],
+    correctIndex: 1,
+    explanation:
+      "The Argo Rollouts controller replaces the Deployment controller's logic with strategy-aware reconciliation: it advances/holds canary steps, manages the active/preview Service split for blue-green, and integrates with AnalysisRuns and TrafficRouting providers — none of which the stock Deployment controller understands.",
+  },
+  {
+    id: 'capa-54',
+    question: "What is a straightforward way to convert an existing Kubernetes `Deployment` to an Argo Rollouts `Rollout`?",
+    options: [
+      'Delete the Deployment permanently with no migration path available',
+      'Change the resource `kind` from `Deployment` to `Rollout` (and apiVersion to argoproj.io), replace the plain `strategy` with a `canary` or `blueGreen` strategy block, keeping the rest of the pod template/selector largely the same',
+      'Rollouts can only be created from scratch and never migrated from a Deployment',
+      'Install a separate Kubernetes distribution that natively supports Rollouts',
+    ],
+    correctIndex: 1,
+    explanation:
+      "Because Rollout and Deployment share most of their spec shape, migrating is mostly mechanical: swap the `kind`/`apiVersion`, and replace the native rolling-update `strategy` with a `canary`/`blueGreen` block — the pod template, labels, and selector generally carry over unchanged.",
+  },
+  {
+    id: 'capa-55',
+    question: 'Why does a Sensor\'s trigger (e.g. submitting an Argo Workflow) require a dedicated ServiceAccount with specific RBAC permissions?',
+    options: [
+      'Sensors run with full cluster-admin by default and RBAC is optional',
+      'The Sensor acts on behalf of that ServiceAccount when creating resources (like a Workflow) in the cluster, so it needs explicit RBAC permission to create/manage those resource kinds — following the principle of least privilege rather than relying on a default broad-access identity',
+      'RBAC only applies to Sensors that use webhooks, not other event sources',
+      'ServiceAccounts are required only for EventSources, never for Sensors',
+    ],
+    correctIndex: 1,
+    explanation:
+      "A Sensor's trigger performs real cluster actions (e.g. `create` on a Workflow) as whatever ServiceAccount it's configured to use. Without RBAC explicitly granting that ServiceAccount the needed verbs/resources, the trigger fails with a permissions error — configuring a scoped ServiceAccount keeps the Sensor limited to only what its triggers actually need to do.",
+  },
 ]

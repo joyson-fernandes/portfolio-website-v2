@@ -168,16 +168,35 @@ docs, not real exam content" disclaimer on the hub page.
 
 CGOA and CAPA shipped v1 with 30 questions each (up from an initial 15),
 sourced from official Argo/GitOps docs and general domain knowledge.
-Target is ~120 per cert. Sources to draw the remainder from:
+Target is ~120 per cert.
 
-- **CGOA:** `notes.kodekloud.com/docs/Prep-Course-GitOps-Certified-Associate-CGOA/`
-  (full doc index at `notes.kodekloud.com/llms.txt`)
-- **CAPA:** `notes.kodekloud.com/docs/Prep-Course-Certified-Argo-Project-Associate-CAPA/`
-  (e.g. the ArgoCD/ArgoCD-Project page covers AppProject scoping,
-  roles, and RBAC — a topic not yet covered in the current 30)
+**2026-09-10 session 2:** pulled the full page index for both courses
+from `notes.kodekloud.com/llms.txt` (CGOA: 41 pages, CAPA: 98 pages),
+diffed page topics against existing question IDs, and appended new
+questions covering previously-untested ground:
 
-Do this in a fresh session: fetch the course's page tree via its
-`llms.txt` index, extract concepts not already covered by the existing
-question IDs in `cgoa-questions.ts`/`capa-questions.ts`, and append new
-questions in the same `Question` shape, reviewed for accuracy before
-shipping.
+- **CGOA → 50 questions** (`cgoa-31` to `cgoa-50`): in-cluster vs
+  external reconcilers, Git/OCI as state stores, notifications &
+  Prometheus/Alertmanager integration, alternative reconciliation
+  engines (Fleet, Jenkins X), CaC vs IaC, DevOps/DevSecOps framing,
+  CI vs CD, shadow/A/B deployment patterns, rolling vs recreate,
+  ApplicationSet list generator, Helm vs Kustomize tradeoffs, manual
+  vs continuous reconciliation modes.
+- **CAPA → 55 questions** (`capa-31` to `capa-55`): AppProject scoping
+  (`sourceRepos`/`destinations`/`roles` RBAC — the gap flagged last
+  session), Argo CD architecture (API server / repo server /
+  application controller), HA vs non-HA install, default poll
+  interval, health-check fallback behavior, ApplicationSet `cluster`/
+  `git`/`matrix` generators, Workflows internals (workflow-controller
+  vs argo-server, `script`/`containerSet` templates, workflow-level
+  parameters, `when` conditionals, daemoned containers, enhanced
+  `depends` expressions, `parallelism`), Rollout-vs-Deployment
+  relationship and conversion, Sensor trigger RBAC.
+
+Remaining gap to ~120/cert: CGOA needs ~70 more, CAPA ~65 more.
+Untapped source pages for the next pass — mostly the course's demo
+pages (`Demo-*`), which describe hands-on CLI/YAML steps rather than
+new concepts, so squeezing further *distinct* multiple-choice
+questions out of them will take more care than this batch did. Worth
+checking for near-duplicate questions across the two banks before
+adding more (CGOA and CAPA overlap heavily on core Argo CD basics).
