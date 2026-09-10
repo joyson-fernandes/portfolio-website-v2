@@ -1,5 +1,8 @@
 # Use the official Node.js 18 image as base
 FROM node:20-alpine AS base
+# Pick up patched OS packages (e.g. openssl/libcrypto3) regardless of when
+# this base image tag was published — Trivy fails the build otherwise.
+RUN apk update && apk upgrade --no-cache
 
 # Install dependencies only when needed
 FROM base AS deps
