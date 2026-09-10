@@ -21,10 +21,18 @@ jobs:
     steps:
       - name: Verify tag exists in GHCR
         run: |
+          TAG="$(echo '${{ inputs.tag }}' | xargs)"
+          echo "TAG=$TAG" >> "$GITHUB_ENV"
+
+          # GHCR's registry API needs a token from its own token endpoint,
+          # not a raw GITHUB_TOKEN bearer — works anonymously for public packages.
+          TOKEN=$(curl -sSf "https://ghcr.io/token?scope=repository:joyson-fernandes/portfolio-website:pull" | grep -o '"token":"[^"]*"' | cut -d'"' -f4)
+
           curl -sSf -o /dev/null \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            "https://ghcr.io/v2/joyson-fernandes/portfolio-website/manifests/${{ inputs.tag }}" \
-            || (echo "::error::Tag ${{ inputs.tag }} not found in $IMAGE_NAME" && exit 1)
+            -H "Authorization: Bearer $TOKEN" \
+            -H "Accept: application/vnd.oci.image.manifest.v1+json" \
+            "https://ghcr.io/v2/joyson-fernandes/portfolio-website/manifests/$TAG" \
+            || (echo "::error::Tag '$TAG' not found in $IMAGE_NAME" && exit 1)
 
       - name: Update ArgoCD repository (production)
         env:
@@ -37,10 +45,10 @@ jobs:
           cd argocd-repo
 
           echo "Promoting production image to:"
-          echo "$IMAGE_NAME:${{ inputs.tag }}"
+          echo "$IMAGE_NAME:$TAG"
 
           sed -i \
-            "s|image: ghcr.io/joyson-fernandes/portfolio-website:.*|image: ghcr.io/joyson-fernandes/portfolio-website:${{ inputs.tag }}|" \
+            "s|image: ghcr.io/joyson-fernandes/portfolio-website:.*|image: ghcr.io/joyson-fernandes/portfolio-website:${TAG}|" \
             manifests/portfolio/portfolio.yaml
 
           git config user.name "github-actions[bot]"
@@ -53,12 +61,12 @@ jobs:
             exit 0
           fi
 
-          git commit -m "deploy: promote portfolio ${{ inputs.tag }} to production [skip ci]"
+          git commit -m "deploy: promote portfolio $TAG to production [skip ci]"
           git push origin main
 
       - name: Summary
         run: |
           echo "## 🚀 Promoted to Production" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "**Image:** \`$IMAGE_NAME:${{ inputs.tag }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Image:** \`$IMAGE_NAME:$TAG\`" >> "$GITHUB_STEP_SUMMARY"
           echo "**Live:** https://joysonfernandes.com" >> "$GITHUB_STEP_SUMMARY"
