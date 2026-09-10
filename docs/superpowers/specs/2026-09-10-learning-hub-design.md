@@ -163,3 +163,21 @@ docs, not real exam content" disclaimer on the hub page.
   (localStorage) — not raised during brainstorming; default to **no**
   persistence for v1 unless the implementation plan flags it as trivial
   to add
+
+## Follow-up: expand question banks toward 120 per cert
+
+CGOA and CAPA shipped v1 with 30 questions each (up from an initial 15),
+sourced from official Argo/GitOps docs and general domain knowledge.
+Target is ~120 per cert. Sources to draw the remainder from:
+
+- **CGOA:** `notes.kodekloud.com/docs/Prep-Course-GitOps-Certified-Associate-CGOA/`
+  (full doc index at `notes.kodekloud.com/llms.txt`)
+- **CAPA:** `notes.kodekloud.com/docs/Prep-Course-Certified-Argo-Project-Associate-CAPA/`
+  (e.g. the ArgoCD/ArgoCD-Project page covers AppProject scoping,
+  roles, and RBAC — a topic not yet covered in the current 30)
+
+Do this in a fresh session: fetch the course's page tree via its
+`llms.txt` index, extract concepts not already covered by the existing
+question IDs in `cgoa-questions.ts`/`capa-questions.ts`, and append new
+questions in the same `Question` shape, reviewed for accuracy before
+shipping.
