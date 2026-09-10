@@ -62,12 +62,13 @@ jobs:
 
       - name: Scan image
         run: |
-          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin
           trivy image --image-src remote --exit-code 1 --severity CRITICAL,HIGH --no-progress $IMAGE_NAME:pr-${{ github.event.number }}
 
   # ---------------------------------------------------------
-  # Production
-  # Build → GHCR → Update ArgoCD repo
+  # Dev
+  # Build → GHCR → deploy to portfolio-dev (dev.joysonfernandes.com)
+  # Promotion to production is manual — see promote-prod.yaml
   # ---------------------------------------------------------
   build-and-publish:
     runs-on: portfolio-k8s
@@ -122,10 +123,10 @@ jobs:
 
       - name: Scan image
         run: |
-          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin
           trivy image --image-src remote --exit-code 1 --severity CRITICAL,HIGH --no-progress $IMAGE_NAME:$IMAGE_TAG
 
-      - name: Update ArgoCD repository
+      - name: Update ArgoCD repository (dev)
         env:
           ARGOCD_TOKEN: ${{ secrets.ARGOCD_REPO_TOKEN }}
         run: |
@@ -135,28 +136,31 @@ jobs:
 
           cd argocd-repo
 
-          echo "Updating image to:"
+          echo "Updating dev image to:"
           echo "$IMAGE_NAME:$IMAGE_TAG"
 
           sed -i \
             "s|image: ghcr.io/joyson-fernandes/portfolio-website:.*|image: ghcr.io/joyson-fernandes/portfolio-website:${IMAGE_TAG}|" \
-            manifests/portfolio/portfolio.yaml
+            manifests/portfolio-dev/portfolio-dev.yaml
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add manifests/portfolio/portfolio.yaml
+          git add manifests/portfolio-dev/portfolio-dev.yaml
 
           if git diff --cached --quiet; then
             echo "No image change"
             exit 0
           fi
 
-          git commit -m "deploy: portfolio $IMAGE_TAG [skip ci]"
+          git commit -m "deploy: portfolio-dev $IMAGE_TAG [skip ci]"
           git push origin main
 
       - name: Summary
         run: |
-          echo "## 🚀 Portfolio Image Published" >> "$GITHUB_STEP_SUMMARY"
+          echo "## 🚀 Portfolio Image Published to Dev" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "**Image:** \`$IMAGE_NAME:$IMAGE_TAG\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Dev:** https://dev.joysonfernandes.com" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Once verified, promote to production via the **Promote to Production** workflow (Actions tab → Run workflow), passing \`$IMAGE_TAG\`." >> "$GITHUB_STEP_SUMMARY"
