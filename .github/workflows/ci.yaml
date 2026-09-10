@@ -162,6 +162,12 @@ jobs:
           git commit -m "deploy: portfolio-dev $IMAGE_TAG [skip ci]"
           git push origin main
 
+      - name: Trigger immediate ArgoCD sync (dev)
+        run: |
+          curl -fsSL "https://dl.k8s.io/release/$(curl -Ls https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" -o /tmp/kubectl
+          sudo install -m 0755 /tmp/kubectl /usr/local/bin/kubectl
+          kubectl -n argocd annotate application portfolio-dev argocd.argoproj.io/refresh=normal --overwrite
+
       - name: Summary
         run: |
           echo "## 🚀 Portfolio Image Published to Dev" >> "$GITHUB_STEP_SUMMARY"
