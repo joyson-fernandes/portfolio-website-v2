@@ -196,4 +196,199 @@ export const CGOA_QUESTIONS: Question[] = [
     explanation:
       'A resource can be Synced (its spec matches Git exactly) but Degraded (e.g. a Deployment rolled out the correct spec, but the pods are crash-looping) — Sync Status is about matching desired state, Health Status is about whether the workload is actually operating correctly.',
   },
+  {
+    id: 'cgoa-16',
+    question: 'What is an Argo CD "sync wave" used for?',
+    options: [
+      'Controlling the order resources are applied within a single sync, e.g. applying a Namespace or CRD before the resources that depend on it',
+      'Scheduling how often Argo CD polls Git for changes',
+      'Grouping Applications by team for billing purposes',
+      'Determining which cluster an Application deploys to',
+    ],
+    correctIndex: 0,
+    explanation:
+      'Sync waves (set via the `argocd.argoproj.io/sync-wave` annotation) let you sequence resource application within one sync — lower-numbered waves apply first and must reach a healthy state before the next wave proceeds, useful for ordering dependencies like CRDs before custom resources.',
+  },
+  {
+    id: 'cgoa-17',
+    question: 'What is the purpose of Argo CD PreSync and PostSync resource hooks?',
+    options: [
+      'They run arbitrary Jobs before or after the main sync, commonly used for database migrations (PreSync) or smoke tests/notifications (PostSync)',
+      'They control which user can trigger a sync',
+      'They are only used to validate YAML syntax before applying',
+      'They automatically create the destination namespace',
+    ],
+    correctIndex: 0,
+    explanation:
+      'Hooks are ordinary Kubernetes resources (usually Jobs) annotated with `argocd.argoproj.io/hook: PreSync` or `PostSync`. Argo CD runs PreSync hooks before syncing the rest of the manifests (e.g. a migration Job) and PostSync hooks after the sync succeeds (e.g. a smoke test).',
+  },
+  {
+    id: 'cgoa-18',
+    question: 'A resource in Git differs from the live cluster only in a field managed by another controller (e.g. a webhook-injected sidecar). How should this be handled in Argo CD without disabling selfHeal entirely?',
+    options: [
+      'Delete the Application and recreate it whenever this happens',
+      'Use `ignoreDifferences` to exclude that specific field/path from the diff so Argo CD stops reporting it as drift',
+      'There is no way to handle this — the Application must always show OutOfSync',
+      'Set `prune: false` on the entire Application',
+    ],
+    correctIndex: 1,
+    explanation:
+      '`ignoreDifferences` lets you scope out specific JSON paths (or whole resource kinds) from Argo CD\'s diffing, so fields legitimately mutated by another controller (like an admission webhook injecting a sidecar) don\'t cause perpetual OutOfSync noise or fight with selfHeal.',
+  },
+  {
+    id: 'cgoa-19',
+    question: 'What is "image automation" in a GitOps context (e.g. Flux\'s image-automation-controller)?',
+    options: [
+      'Automatically compressing container images to reduce registry storage',
+      'A controller that scans a registry for new image tags matching a policy, then automatically commits the updated tag into the Git repo on the app\'s behalf',
+      'A tool that automatically builds Docker images from source with no CI pipeline needed',
+      'A feature that deletes unused images from a cluster\'s local container runtime',
+    ],
+    correctIndex: 1,
+    explanation:
+      "Flux's image reflector/automation controllers watch a registry for new tags matching a policy (e.g. semver range), then write the updated tag back into the Git manifests automatically — closing the loop from CI-built image to GitOps-deployed change without a human editing YAML.",
+  },
+  {
+    id: 'cgoa-20',
+    question: 'Why do most GitOps setups prefer webhook-triggered reconciliation in addition to periodic polling?',
+    options: [
+      'Webhooks are required by Kubernetes and polling is not supported',
+      'Webhooks notify the GitOps agent immediately on a Git push, reducing the delay between a commit and the cluster reconciling to it, compared to waiting for the next poll interval',
+      'Polling causes data loss, webhooks do not',
+      'Webhooks eliminate the need for a Git repository entirely',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Without a webhook, the agent notices new commits only on its next poll (e.g. every 3 minutes), delaying reconciliation. A webhook lets the Git provider push a notification immediately on `git push`, so sync happens in seconds instead of waiting for the poll cycle.',
+  },
+  {
+    id: 'cgoa-21',
+    question: 'What does "environment promotion" typically mean in a GitOps repository structure?',
+    options: [
+      'Manually re-typing the same manifests into each environment\'s directory',
+      'Advancing a specific, already-tested artifact/tag (or a Git commit) from one environment\'s config (e.g. dev) to the next (e.g. staging, then prod) via a Git operation, rather than rebuilding for each stage',
+      'Giving a Kubernetes namespace admin privileges',
+      'Deleting the dev environment once staging is ready',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Promotion means moving a known-good, already-built artifact through environments by updating each environment\'s Git-tracked config (e.g. bumping the image tag in the staging overlay to match what dev validated), preserving the principle of "build once, deploy many times" instead of rebuilding per environment.',
+  },
+  {
+    id: 'cgoa-22',
+    question: 'Why is "build once, deploy many" considered a GitOps best practice?',
+    options: [
+      'It reduces cloud storage costs for container registries',
+      'It guarantees the exact artifact tested in one environment is the same one promoted to the next, eliminating "it worked in staging but not prod" caused by rebuilding with different dependency versions',
+      'It is required by the CNCF for GitOps certification',
+      'It removes the need for a container registry entirely',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Rebuilding per environment risks picking up a different dependency version between builds (e.g. an unpinned base image or floating package version), so what passed staging isn\'t bit-for-bit what reaches production. Building once and promoting the same immutable artifact/tag removes that variable entirely.',
+  },
+  {
+    id: 'cgoa-23',
+    question: 'What is a key difference between using GitOps for application deployments versus for infrastructure provisioning (e.g. Terraform)?',
+    options: [
+      'There is no difference; the same reconciliation model applies identically to both',
+      'Application GitOps tools (Argo CD, Flux) reconcile continuously against a live Kubernetes API; infrastructure-as-code tools like Terraform are typically plan/apply-driven and reconcile against cloud provider APIs, often on a schedule or via a pipeline rather than continuous drift correction',
+      'Terraform cannot be used with Git at all',
+      'GitOps tools cannot manage anything outside of Kubernetes',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Argo CD/Flux run inside the cluster and continuously reconcile Kubernetes resources against Git. Terraform\'s native workflow is plan-then-apply against a state file and cloud APIs — some teams wrap it with periodic "Terraform GitOps" pipelines to approximate continuous reconciliation, but it is not the same built-in control-loop model.',
+  },
+  {
+    id: 'cgoa-24',
+    question: 'What is the primary compliance/audit benefit of a GitOps workflow?',
+    options: [
+      'It automatically generates SOC2 certificates',
+      'Every change to the cluster has a corresponding Git commit with author, timestamp, and diff, providing a complete, immutable audit trail of who changed what and when',
+      'It encrypts all data at rest by default',
+      'It removes the need for any access controls',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Because every desired-state change must go through a Git commit (ideally via a reviewed pull request) rather than an ad-hoc `kubectl` command, GitOps produces a natural, tamper-evident audit log of every production change — who proposed it, who approved it, and exactly what changed.',
+  },
+  {
+    id: 'cgoa-25',
+    question: 'Why do many GitOps workflows require changes to go through a pull request rather than a direct commit to the main branch?',
+    options: [
+      'Pull requests are a hard technical requirement of Argo CD and Flux',
+      'It adds a human review/approval gate before a change is merged and picked up by the GitOps agent, catching mistakes before they reach the cluster',
+      'Direct commits to main are technically impossible in Git',
+      'Pull requests automatically run the application\'s test suite with no CI configuration needed',
+    ],
+    correctIndex: 1,
+    explanation:
+      'GitOps tools themselves don\'t require PRs — they just watch a branch. Teams add branch protection requiring PR review as a process control, so a second person reviews infrastructure/config changes before they merge and get reconciled into the cluster, catching errors pre-merge instead of post-deploy.',
+  },
+  {
+    id: 'cgoa-26',
+    question: 'What does "immutable infrastructure" mean, and how does it relate to GitOps?',
+    options: [
+      'Servers/containers are never patched in place; instead a new image/resource is built and the old one is replaced entirely — GitOps reinforces this by always deploying a full desired-state definition rather than incremental in-place edits',
+      'Infrastructure that can never be deleted once created',
+      'A synonym for read-only file systems inside containers',
+      'It has no relationship to GitOps',
+    ],
+    correctIndex: 0,
+    explanation:
+      'Immutable infrastructure replaces rather than patches — e.g. deploying a new container image instead of SSH-ing in to update code. GitOps naturally supports this: the desired state in Git fully describes what should exist, and reconciliation replaces drifted resources rather than patching them incrementally.',
+  },
+  {
+    id: 'cgoa-27',
+    question: 'In a disaster recovery scenario where a cluster is completely lost and rebuilt from scratch, what is the key advantage a GitOps workflow provides?',
+    options: [
+      'GitOps prevents clusters from ever being lost',
+      'Since the entire desired state is declared in Git, pointing a fresh GitOps agent at the same repo reconstructs the full application/config state automatically, without needing separate manual runbooks for every resource',
+      'GitOps automatically backs up persistent volume data',
+      'It eliminates the need for a new cluster to be provisioned',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Git already holds the complete, versioned desired state of everything the GitOps agent manages. Bootstrapping a new cluster is largely "install the agent, point it at the repo" — the reconciliation loop rebuilds everything it declares. (Stateful data like PV contents still needs its own backup/restore strategy — GitOps covers config and manifests, not data.)',
+  },
+  {
+    id: 'cgoa-28',
+    question: 'What is a "sync window" in Argo CD used for?',
+    options: [
+      'Restricting the physical browser window size for the Argo CD UI',
+      'Defining time-based rules for when automated syncs are allowed or denied, e.g. blocking auto-sync during a change freeze or business hours',
+      'Setting a timeout after which a stuck sync operation is killed',
+      'Controlling the resolution of the sync progress bar in the UI',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Sync windows (`spec.syncWindows` on an AppProject) let you allow or deny automated syncing during specific time ranges — commonly used to enforce change freezes (e.g. no prod deploys on Friday afternoons) without disabling GitOps management outright.',
+  },
+  {
+    id: 'cgoa-29',
+    question: 'Why does GitOps typically discourage giving individual engineers direct `kubectl` write access to production clusters?',
+    options: [
+      'kubectl is deprecated and no longer works with modern Kubernetes',
+      'Direct kubectl access bypasses the Git-reviewed change process and creates untracked drift that a GitOps agent will either fight against (if selfHeal is on) or silently diverge from (if not), undermining Git as the single source of truth',
+      'kubectl cannot connect to clusters managed by Argo CD',
+      'It is a hard technical restriction enforced by Kubernetes RBAC by default',
+    ],
+    correctIndex: 1,
+    explanation:
+      "It's a process/security recommendation, not a technical block. Direct kubectl changes aren't recorded in Git, so they either get silently reverted by selfHeal (confusing whoever made the change) or accumulate as untracked, unreviewed drift — both undermine Git as the actual source of truth.",
+  },
+  {
+    id: 'cgoa-30',
+    question: "What is the difference between Argo CD's manual sync and automated sync policy?",
+    options: [
+      'They are functionally identical; "manual" is just a legacy name',
+      'With automated sync, Argo CD applies new Git changes to the cluster on its own as soon as it detects them; with manual sync, changes are detected and shown as OutOfSync, but a person must explicitly trigger the sync to apply them',
+      'Manual sync only works for Helm charts',
+      'Automated sync requires a paid Argo CD license',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Automated sync (`syncPolicy.automated`) has Argo CD apply detected Git changes immediately without human intervention. Without it, Argo CD still detects and reports drift/new commits as OutOfSync, but waits for someone to click "Sync" (or run `argocd app sync`) before actually applying them — useful for environments wanting a manual gate.',
+  },
 ]
