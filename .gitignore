@@ -86,3 +86,6 @@ temp/
 
 # Kubernetes secrets (if any sensitive data)
 k8s/secrets-local.yaml
+
+# Brainstorming session artifacts
+.superpowers/
