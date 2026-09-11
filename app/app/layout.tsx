@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next'
+import Script from 'next/script'
 import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
 import './globals.css'
@@ -51,6 +52,13 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="font-sans antialiased">
+        {process.env.NODE_ENV === 'production' && (
+          <Script
+            src="https://analytics.joysontech.com/script.js"
+            data-website-id="e96686d6-a6ae-4d79-aea4-202f1afcb251"
+            strategy="afterInteractive"
+          />
+        )}
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
