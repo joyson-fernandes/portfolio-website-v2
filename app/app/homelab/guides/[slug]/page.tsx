@@ -7,6 +7,7 @@ import rehypeAutolinkHeadings from 'rehype-autolink-headings'
 import { getGuideBySlug, getGuideSlugs } from '@/lib/guides'
 import { mdxComponents } from '@/components/guides/mdx-components'
 import GuideLayout from '@/components/guides/guide-layout'
+import GuideViewTracker from '@/components/guides/guide-view-tracker'
 import HomelabNavigation from '@/components/layout/homelab-navigation'
 import Footer from '@/components/sections/footer'
 
@@ -43,6 +44,7 @@ export default async function GuidePage(props: PageProps) {
 
   return (
     <>
+      <GuideViewTracker slug={params.slug} />
       <HomelabNavigation />
       <GuideLayout meta={guide.meta} content={guide.content}>
         <MDXRemote

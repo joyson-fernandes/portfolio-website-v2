@@ -82,11 +82,11 @@ export default function QuizPage() {
     fetch('/api/learning/event', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ certId: cert.id, passed }),
+      body: JSON.stringify({ certId: cert.id, passed, scorePercent: score.percent }),
     }).catch(() => {
       // Metrics reporting is best-effort — a failure here shouldn't affect the quiz UX.
     })
-  }, [session.finished, cert.id, passed])
+  }, [session.finished, cert.id, passed, score.percent])
 
   return (
     <main className="min-h-screen">

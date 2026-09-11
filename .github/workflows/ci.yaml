@@ -63,6 +63,7 @@ jobs:
           docker buildx build \
             --platform linux/amd64 \
             --tag $IMAGE_NAME:$TAG \
+            --build-arg GIT_SHA=$(git rev-parse --short HEAD) \
             --push \
             ./app
 
@@ -122,6 +123,7 @@ jobs:
             --platform linux/amd64 \
             --tag $IMAGE_NAME:$TAG \
             --tag $IMAGE_NAME:latest \
+            --build-arg GIT_SHA=$TAG \
             --push \
             ./app
 

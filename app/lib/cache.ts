@@ -1,3 +1,4 @@
+import { cacheHitsTotal, cacheMissesTotal } from '@/lib/metrics'
 
 // Simple in-memory cache for certifications
 interface CacheItem<T> {
@@ -19,15 +20,26 @@ class SimpleCache {
   }
 
   get<T>(key: string): T | null {
+    // Label by the key's prefix (e.g. "certifications" not
+    // "certifications:<arbitrary-username>") — the full key can contain
+    // user-controlled input via query params, which would otherwise blow
+    // up the metric's label cardinality.
+    const metricKey = key.split(':')[0]
+
     const item = this.cache.get(key)
-    if (!item) return null
+    if (!item) {
+      cacheMissesTotal.inc({ key: metricKey })
+      return null
+    }
 
     const now = Date.now()
     if (now - item.timestamp > item.ttl) {
       this.cache.delete(key)
+      cacheMissesTotal.inc({ key: metricKey })
       return null
     }
 
+    cacheHitsTotal.inc({ key: metricKey })
     return item.data as T
   }
 

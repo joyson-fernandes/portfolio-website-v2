@@ -8,6 +8,7 @@ import TechBadge from '@/components/shared/tech-badge'
 import { BlurFade } from '@/components/ui/magic/blur-fade'
 import { CardHoverEffect } from '@/components/ui/aceternity/card-hover-effect'
 import { useProjects } from '@/hooks/useProjects'
+import { trackProjectClick } from '@/lib/track'
 
 const HOMELAB_PROJECTS = [
   {
@@ -16,6 +17,7 @@ const HOMELAB_PROJECTS = [
       'Self-service namespace provisioning via GitOps. Developers add a config.yaml, raise a PR, and get a fully configured K8s namespace with ResourceQuotas, CiliumNetworkPolicies, RBAC, ServiceMonitor, and Vault secrets — all via ArgoCD ApplicationSet.',
     technologies: ['Go', 'Kubernetes', 'ArgoCD', 'Kyverno', 'Vault', 'Cilium', 'Helm'],
     github: 'https://github.com/joyson-fernandes/platform',
+    trackId: 'ide-platform',
   },
   {
     title: 'LinkVolt',
@@ -23,6 +25,7 @@ const HOMELAB_PROJECTS = [
       'URL shortener & link page SaaS — 6 Go microservices (CQRS) on a self-managed 4-node HA K8s cluster. Full GitOps via ArgoCD App-of-Apps, Gitea Actions CI/CD, Cilium CNI, Sealed Secrets, and hybrid failover to Fly.io.',
     technologies: ['Go', 'Kubernetes', 'ArgoCD', 'Cilium', 'PostgreSQL', 'SQS', 'Prometheus'],
     github: 'https://github.com/joyson-fernandes',
+    trackId: 'linkvolt',
   },
   {
     title: 'Portfolio v2',
@@ -30,6 +33,7 @@ const HOMELAB_PROJECTS = [
       'This site — Next.js on K8s with interactive React Flow infrastructure diagram, Credly & Medium integrations, GitHub Actions CI/CD with PR preview deployments.',
     technologies: ['Next.js', 'TypeScript', 'React Flow', 'GitHub Actions', 'Kubernetes'],
     github: 'https://github.com/joyson-fernandes/portfolio-website-v2',
+    trackId: 'portfolio-v2',
   },
 ]
 
@@ -65,6 +69,7 @@ export default function Projects() {
                         href={project.github}
                         target="_blank"
                         rel="noopener noreferrer"
+                        onClick={() => trackProjectClick(project.trackId)}
                         className="text-muted-foreground hover:text-foreground transition-colors"
                       >
                         <Github className="h-4 w-4" />
@@ -114,6 +119,7 @@ export default function Projects() {
                   href={article.mediumUrl}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => trackProjectClick('medium-article')}
                   className="group block h-full"
                 >
                   <div className="h-full rounded-xl border border-border bg-card p-6 transition-all hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5">
@@ -164,6 +170,7 @@ export default function Projects() {
               href="https://medium.com/@joysonfernandes"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => trackProjectClick('medium-profile')}
               className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-full border border-border text-muted-foreground hover:text-foreground hover:border-primary/50 transition-all"
             >
               Read more on Medium

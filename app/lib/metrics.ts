@@ -1,4 +1,4 @@
-import { Registry, collectDefaultMetrics, Counter, Histogram } from 'prom-client'
+import { Registry, collectDefaultMetrics, Counter, Histogram, Gauge } from 'prom-client'
 
 // Module-level singleton: Next.js can re-import this module across route
 // handlers within the same server process, but we need one shared registry
@@ -72,6 +72,85 @@ export const quizPassTotal = metricOrExisting(
       registers: [registry],
     }),
 )
+
+export const quizScorePercent = metricOrExisting(
+  'portfolio_quiz_score_percent',
+  () =>
+    new Histogram({
+      name: 'portfolio_quiz_score_percent',
+      help: 'Distribution of Learning Hub quiz scores (0-100)',
+      labelNames: ['cert_id'],
+      buckets: [10, 20, 30, 40, 50, 60, 70, 75, 80, 90, 100],
+      registers: [registry],
+    }),
+)
+
+export const projectLinkClicksTotal = metricOrExisting(
+  'portfolio_project_link_clicks_total',
+  () =>
+    new Counter({
+      name: 'portfolio_project_link_clicks_total',
+      help: 'Total clicks on outbound project/article links',
+      labelNames: ['project'],
+      registers: [registry],
+    }),
+)
+
+export const guideViewsTotal = metricOrExisting(
+  'portfolio_guide_views_total',
+  () =>
+    new Counter({
+      name: 'portfolio_guide_views_total',
+      help: 'Total views of homelab setup guides',
+      labelNames: ['slug'],
+      registers: [registry],
+    }),
+)
+
+export const cacheHitsTotal = metricOrExisting(
+  'portfolio_cache_hits_total',
+  () =>
+    new Counter({
+      name: 'portfolio_cache_hits_total',
+      help: 'Total in-memory cache hits',
+      labelNames: ['key'],
+      registers: [registry],
+    }),
+)
+
+export const cacheMissesTotal = metricOrExisting(
+  'portfolio_cache_misses_total',
+  () =>
+    new Counter({
+      name: 'portfolio_cache_misses_total',
+      help: 'Total in-memory cache misses',
+      labelNames: ['key'],
+      registers: [registry],
+    }),
+)
+
+// Always 1 — the value carries no meaning, the labels do. Standard
+// Prometheus pattern for "which version is actually running right now".
+metricOrExisting(
+  'portfolio_build_info',
+  () =>
+    new Gauge({
+      name: 'portfolio_build_info',
+      help: 'Build metadata for the running instance (value is always 1)',
+      labelNames: ['git_sha'],
+      registers: [registry],
+    }),
+).set({ git_sha: process.env.GIT_SHA || 'unknown' }, 1)
+
+metricOrExisting(
+  'portfolio_deploy_timestamp_seconds',
+  () =>
+    new Gauge({
+      name: 'portfolio_deploy_timestamp_seconds',
+      help: 'Unix timestamp when this process started (proxy for last deploy time)',
+      registers: [registry],
+    }),
+).set(Date.now() / 1000)
 
 /**
  * Wraps a route handler to record portfolio_http_requests_total and
