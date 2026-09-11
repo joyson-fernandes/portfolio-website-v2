@@ -1,6 +1,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { cache, CACHE_KEYS } from '@/lib/cache'
+import { externalApiCallsTotal, withMetrics } from '@/lib/metrics'
 
 // Force this route to be dynamic
 export const dynamic = 'force-dynamic'
@@ -114,6 +115,8 @@ async function fetchCredlyBadges(username: string): Promise<ProcessedCertificati
       next: { revalidate: 3600 } // Cache for 1 hour
     })
 
+    externalApiCallsTotal.inc({ target: 'credly', status: response.ok ? 'up' : 'down' })
+
     if (!response.ok) {
       throw new Error(`Failed to fetch badges: ${response.status}`)
     }
@@ -173,7 +176,7 @@ async function fetchCredlyBadges(username: string): Promise<ProcessedCertificati
   }
 }
 
-export async function GET(request: NextRequest) {
+export const GET = withMetrics('/api/certifications', 'GET', async (request: NextRequest) => {
   try {
     const searchParams = request.nextUrl.searchParams
     const username = searchParams.get('username') || 'joyson-fernandes'
@@ -238,4 +241,4 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     )
   }
-}
+})

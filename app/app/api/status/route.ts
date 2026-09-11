@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { externalApiCallsTotal, withMetrics } from '@/lib/metrics'
 
 interface ServiceStatus {
   name: string
@@ -34,6 +35,7 @@ async function checkService(service: typeof SERVICES[0]): Promise<ServiceStatus>
 
     const latency = Date.now() - start
     const isUp = response.status < 400
+    externalApiCallsTotal.inc({ target: service.name, status: isUp ? 'up' : 'degraded' })
     return {
       name: service.name,
       url: service.url,
@@ -43,6 +45,7 @@ async function checkService(service: typeof SERVICES[0]): Promise<ServiceStatus>
     }
   } catch (err) {
     console.error(`Status check failed for ${service.name}:`, err instanceof Error ? err.message : err)
+    externalApiCallsTotal.inc({ target: service.name, status: 'down' })
     return {
       name: service.name,
       url: service.url,
@@ -55,7 +58,7 @@ async function checkService(service: typeof SERVICES[0]): Promise<ServiceStatus>
 
 export const dynamic = 'force-dynamic'
 
-export async function GET() {
+export const GET = withMetrics('/api/status', 'GET', async () => {
   const results = await Promise.all(SERVICES.map(checkService))
 
   const allUp = results.every((r) => r.status === 'up')
@@ -66,4 +69,4 @@ export async function GET() {
     services: results,
     checkedAt: new Date().toISOString(),
   })
-}
+})

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { useParams, notFound } from 'next/navigation'
 import { getCertById } from '@/data/learning/certs'
 import { CGOA_QUESTIONS } from '@/data/learning/cgoa-questions'
@@ -70,6 +70,23 @@ export default function QuizPage() {
     [session.questions, session.answers, session.finished],
   )
   const passed = isPassing(score.percent, cert.passThreshold)
+
+  const reported = useRef(false)
+  useEffect(() => {
+    if (!session.finished) {
+      reported.current = false // allow the next retake's completion to report again
+      return
+    }
+    if (reported.current) return
+    reported.current = true
+    fetch('/api/learning/event', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ certId: cert.id, passed }),
+    }).catch(() => {
+      // Metrics reporting is best-effort — a failure here shouldn't affect the quiz UX.
+    })
+  }, [session.finished, cert.id, passed])
 
   return (
     <main className="min-h-screen">

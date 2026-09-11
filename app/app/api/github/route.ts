@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { externalApiCallsTotal, withMetrics } from '@/lib/metrics'
 
 interface ContributionDay {
   date: string
@@ -10,7 +11,7 @@ interface ContributionWeek {
   days: ContributionDay[]
 }
 
-export async function GET() {
+export const GET = withMetrics('/api/github', 'GET', async () => {
   try {
     const username = 'joyson-fernandes'
 
@@ -19,6 +20,7 @@ export async function GET() {
     const response = await fetch(`https://github-contributions-api.jogruber.de/v4/${username}?y=last`, {
       next: { revalidate: 3600 }, // Cache for 1 hour
     })
+    externalApiCallsTotal.inc({ target: 'jogruber-contributions', status: response.ok ? 'up' : 'down' })
 
     if (!response.ok) {
       throw new Error('Failed to fetch GitHub data')
@@ -31,6 +33,7 @@ export async function GET() {
       headers: { Accept: 'application/vnd.github.v3+json' },
       next: { revalidate: 3600 },
     })
+    externalApiCallsTotal.inc({ target: 'github-api', status: profileRes.ok ? 'up' : 'down' })
     const profile = await profileRes.json()
 
     return NextResponse.json({
@@ -47,4 +50,4 @@ export async function GET() {
       { status: 200 } // Return empty data rather than error
     )
   }
-}
+})
