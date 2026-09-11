@@ -22,6 +22,17 @@ const SERVICES = [
   { name: 'Loki', url: 'http://loki.loki.svc.cluster.local:3100/ready', category: 'Observability' },
   { name: 'Tempo', url: 'http://tempo.monitoring.svc.cluster.local:3200/ready', category: 'Observability' },
   { name: 'Umami', url: 'http://umami.umami.svc.cluster.local/api/heartbeat', category: 'Applications' },
+  {
+    name: 'Traefik',
+    // No matching IngressRoute for a bare Host header, so this always 404s
+    // by design — Traefik's internal ping port (8080) has no Service
+    // exposing it for cluster-DNS access, so a 404 (meaning the process
+    // answered at all) is the actual "alive" signal here, not an error.
+    url: 'http://traefik.traefik.svc.cluster.local',
+    category: 'Platform',
+    anyResponseIsUp: true,
+  },
+  { name: 'Alloy', url: 'http://alloy.alloy.svc.cluster.local:12345/-/ready', category: 'Observability' },
 ]
 
 async function checkService(service: typeof SERVICES[0]): Promise<ServiceStatus> {
@@ -39,7 +50,7 @@ async function checkService(service: typeof SERVICES[0]): Promise<ServiceStatus>
     clearTimeout(timeout)
 
     const latency = Date.now() - start
-    const isUp = response.status < 400
+    const isUp = service.anyResponseIsUp || response.status < 400
     externalApiCallsTotal.inc({ target: service.name, status: isUp ? 'up' : 'degraded' })
     return {
       name: service.name,
