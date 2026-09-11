@@ -56,6 +56,13 @@ export default function RootLayout({
           <Script
             src="https://analytics.joysontech.com/script.js"
             data-website-id="e96686d6-a6ae-4d79-aea4-202f1afcb251"
+            // NODE_ENV=production is baked into both the dev and prod
+            // deployments (see Dockerfile), so it alone doesn't
+            // distinguish real visitors from dev.joysonfernandes.com
+            // traffic. data-domains is Umami's own hostname allowlist —
+            // the script checks window.location.hostname client-side and
+            // no-ops anywhere else, including dev/localhost.
+            data-domains="joysonfernandes.com"
             strategy="afterInteractive"
           />
         )}
