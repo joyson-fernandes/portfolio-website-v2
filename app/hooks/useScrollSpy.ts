@@ -16,8 +16,6 @@ export const HOMELAB_SECTIONS = [
   'homelab-hero',
   'infrastructure',
   'pipeline',
-  'monitoring',
-  'status',
   'adrs',
   'deploy-info',
 ]

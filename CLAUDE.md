@@ -42,8 +42,10 @@ Personal portfolio website for Joyson Fernandes — Platform & DevOps Engineer.
 ### Main page (`/`) — 10 sections
 Hero → Metrics → About → Skills → Projects → Experience → Certifications → GitHub Activity → Homelab CTA → Footer
 
-### Homelab page (`/homelab`) — 8 sections
-Homelab Hero (intro) → Infrastructure Diagram → Pipeline Animation → Live Grafana → Service Status → ADRs → Deploy Info → Footer
+### Homelab page (`/homelab`) — 6 sections
+Homelab Hero (intro) → Infrastructure Diagram → Pipeline Animation → ADRs → Deploy Info → Footer
+
+(Live Grafana and Service Status sections were removed once Grafana/ArgoCD moved to internal-only access — their `grafana.tsx`/`status.tsx` components and `#monitoring`/`#status` nav entries are gone. `/api/status` still exists as a working API, just unused by the UI now.)
 
 ### Setup Guides (`/homelab/guides`)
 MDX-based guides with frontmatter, category filters, syntax highlighting (rehype-pretty-code), TOC sidebar. Add new guides by creating `.mdx` files in `app/content/guides/`.
@@ -78,8 +80,6 @@ app/                        — Next.js application
       infrastructure.tsx    — Interactive React Flow diagram (25 nodes, 26 edges)
       pipeline.tsx          — 8-step animated CI/CD pipeline visualization
       skills.tsx            — 8 skill category cards with moving borders
-      grafana.tsx           — Live Grafana panel embeds (CPU, memory, network)
-      status.tsx            — Real-time service health dashboard
       projects.tsx          — IDP, LinkVolt, Portfolio + Medium articles with Featured tags
       experience.tsx        — Animated alternating timeline (RHS, Airinmar, earlier)
       certifications.tsx    — Kubestronaut hero card + grouped Credly cert grid

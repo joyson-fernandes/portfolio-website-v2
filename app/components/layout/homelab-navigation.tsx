@@ -11,8 +11,6 @@ import ThemeToggle from '@/components/shared/theme-toggle'
 const NAV_ITEMS = [
   { label: 'Infrastructure', href: '#infrastructure' },
   { label: 'Pipeline', href: '#pipeline' },
-  { label: 'Monitoring', href: '#monitoring' },
-  { label: 'Status', href: '#status' },
   { label: 'ADRs', href: '#adrs' },
   { label: 'Guides', href: '/homelab/guides', isPage: true },
 ]
