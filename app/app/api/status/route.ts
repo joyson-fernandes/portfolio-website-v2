@@ -9,14 +9,19 @@ interface ServiceStatus {
   category: string
 }
 
+// Verified against the live cluster on 2026-09-11 — this previously
+// listed Harbor/Vault (not deployed on this cluster at all, always
+// reported "down") and had stale Prometheus/Grafana service names
+// (kube-prometheus-kube-prome-prometheus / kube-prometheus-grafana
+// don't exist; the real Helm release name is kube-prometheus-stack).
 const SERVICES = [
   { name: 'Portfolio', url: 'http://portfolio-app.portfolio.svc.cluster.local', category: 'Applications' },
   { name: 'ArgoCD', url: 'http://argocd-server.argocd.svc.cluster.local:80', category: 'Platform' },
-  { name: 'Harbor Registry', url: 'http://harbor-portal.harbor.svc.cluster.local', category: 'Platform' },
-  { name: 'Vault', url: 'http://vault.vault.svc.cluster.local:8200/v1/sys/health?standbyok=true&sealedcode=200&uninitcode=200', category: 'Security' },
-  { name: 'Prometheus', url: 'http://kube-prometheus-kube-prome-prometheus.monitoring.svc.cluster.local:9090/-/healthy', category: 'Observability' },
-  { name: 'Grafana', url: 'http://kube-prometheus-grafana.monitoring.svc.cluster.local/api/health', category: 'Observability' },
-  { name: 'Loki', url: 'http://loki.monitoring.svc.cluster.local:3100/ready', category: 'Observability' },
+  { name: 'Prometheus', url: 'http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090/-/healthy', category: 'Observability' },
+  { name: 'Grafana', url: 'http://kube-prometheus-stack-grafana.monitoring.svc.cluster.local:3000/api/health', category: 'Observability' },
+  { name: 'Loki', url: 'http://loki.loki.svc.cluster.local:3100/ready', category: 'Observability' },
+  { name: 'Tempo', url: 'http://tempo.monitoring.svc.cluster.local:3200/ready', category: 'Observability' },
+  { name: 'Umami', url: 'http://umami.umami.svc.cluster.local/api/heartbeat', category: 'Applications' },
 ]
 
 async function checkService(service: typeof SERVICES[0]): Promise<ServiceStatus> {
