@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { motion, useScroll, useMotionValueEvent } from 'framer-motion'
 import { Menu, X, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useScrollSpy, HOMELAB_SECTIONS } from '@/hooks/useScrollSpy'
 import NavActions, { SOCIAL_LINKS } from '@/components/layout/nav-actions'
 import ThemeToggle from '@/components/shared/theme-toggle'
@@ -19,6 +20,8 @@ export default function HomelabNavigation() {
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const { scrollY } = useScroll()
+  const pathname = usePathname()
+  const isHomelabHome = pathname === '/homelab'
   const activeSection = useScrollSpy(HOMELAB_SECTIONS)
 
   useMotionValueEvent(scrollY, 'change', (latest) => {
@@ -70,11 +73,11 @@ export default function HomelabNavigation() {
                 )
               }
               const sectionId = item.href.replace('#', '')
-              const isActive = activeSection === sectionId
+              const isActive = isHomelabHome && activeSection === sectionId
               return (
-                <a
+                <Link
                   key={item.href}
-                  href={item.href}
+                  href={isHomelabHome ? item.href : `/homelab${item.href}`}
                   className={`relative px-3 py-2 text-sm font-medium transition-colors ${
                     isActive
                       ? 'text-foreground'
@@ -89,7 +92,7 @@ export default function HomelabNavigation() {
                       transition={{ type: 'spring', stiffness: 350, damping: 30 }}
                     />
                   )}
-                </a>
+                </Link>
               )
             })}
           </div>
@@ -136,14 +139,14 @@ export default function HomelabNavigation() {
                   {item.label}
                 </Link>
               ) : (
-                <a
+                <Link
                   key={item.href}
-                  href={item.href}
+                  href={isHomelabHome ? item.href : `/homelab${item.href}`}
                   onClick={() => setIsOpen(false)}
                   className="block px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors"
                 >
                   {item.label}
-                </a>
+                </Link>
               )
             )}
             <div className="pt-4 border-t border-border mt-4 flex items-center gap-2">

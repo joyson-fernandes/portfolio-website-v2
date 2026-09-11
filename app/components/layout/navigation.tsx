@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { motion, useScroll, useMotionValueEvent } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useScrollSpy, MAIN_SECTIONS } from '@/hooks/useScrollSpy'
 import NavActions, { SOCIAL_LINKS } from '@/components/layout/nav-actions'
 import ThemeToggle from '@/components/shared/theme-toggle'
@@ -22,6 +23,8 @@ export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const { scrollY } = useScroll()
+  const pathname = usePathname()
+  const isHome = pathname === '/'
   const activeSection = useScrollSpy(MAIN_SECTIONS)
 
   useMotionValueEvent(scrollY, 'change', (latest) => {
@@ -50,11 +53,11 @@ export default function Navigation() {
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <a href="#hero" className="flex items-center gap-2 group">
+          <Link href={isHome ? '#hero' : '/#hero'} className="flex items-center gap-2 group">
             <span className="text-lg font-bold tracking-tight gradient-text">
               JF
             </span>
-          </a>
+          </Link>
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-1">
@@ -71,11 +74,11 @@ export default function Navigation() {
                 )
               }
               const sectionId = item.href.replace('#', '')
-              const isActive = activeSection === sectionId
+              const isActive = isHome && activeSection === sectionId
               return (
-                <a
+                <Link
                   key={item.href}
-                  href={item.href}
+                  href={isHome ? item.href : `/${item.href}`}
                   className={`relative px-3 py-1.5 text-sm font-medium rounded-full transition-colors ${
                     isActive
                       ? 'text-foreground'
@@ -90,7 +93,7 @@ export default function Navigation() {
                     />
                   )}
                   <span className="relative z-10">{item.label}</span>
-                </a>
+                </Link>
               )
             })}
           </div>
@@ -129,14 +132,14 @@ export default function Navigation() {
                   {item.label}
                 </Link>
               ) : (
-                <a
+                <Link
                   key={item.href}
-                  href={item.href}
+                  href={isHome ? item.href : `/${item.href}`}
                   onClick={() => setIsOpen(false)}
                   className="block px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors"
                 >
                   {item.label}
-                </a>
+                </Link>
               )
             )}
             <div className="pt-4 border-t border-border mt-4 flex items-center gap-2">
