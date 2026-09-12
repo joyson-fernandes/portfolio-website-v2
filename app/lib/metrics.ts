@@ -51,40 +51,6 @@ export const externalApiCallsTotal = metricOrExisting(
     }),
 )
 
-export const quizAttemptsTotal = metricOrExisting(
-  'portfolio_quiz_attempts_total',
-  () =>
-    new Counter({
-      name: 'portfolio_quiz_attempts_total',
-      help: 'Total Learning Hub quiz attempts completed',
-      labelNames: ['cert_id', 'mode'],
-      registers: [registry],
-    }),
-)
-
-export const quizPassTotal = metricOrExisting(
-  'portfolio_quiz_pass_total',
-  () =>
-    new Counter({
-      name: 'portfolio_quiz_pass_total',
-      help: 'Total Learning Hub quiz attempts that passed',
-      labelNames: ['cert_id', 'mode'],
-      registers: [registry],
-    }),
-)
-
-export const quizScorePercent = metricOrExisting(
-  'portfolio_quiz_score_percent',
-  () =>
-    new Histogram({
-      name: 'portfolio_quiz_score_percent',
-      help: 'Distribution of Learning Hub quiz scores (0-100)',
-      labelNames: ['cert_id', 'mode'],
-      buckets: [10, 20, 30, 40, 50, 60, 70, 75, 80, 90, 100],
-      registers: [registry],
-    }),
-)
-
 export const projectLinkClicksTotal = metricOrExisting(
   'portfolio_project_link_clicks_total',
   () =>
