@@ -17,6 +17,7 @@ jobs:
 
     permissions:
       contents: read
+      id-token: write
 
     steps:
       - name: Verify tag exists in GHCR
@@ -69,6 +70,40 @@ jobs:
           curl -fsSL "https://dl.k8s.io/release/$(curl -Ls https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" -o /tmp/kubectl
           sudo install -m 0755 /tmp/kubectl /usr/local/bin/kubectl
           kubectl -n argocd annotate application portfolio argocd.argoproj.io/refresh=normal --overwrite
+
+      - name: Configure AWS credentials (OIDC)
+        id: aws
+        continue-on-error: true
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::566256065001:role/github-portfolio-ecr-push
+          aws-region: eu-west-2
+
+      - name: Sync DR image to ECR
+        if: steps.aws.outcome == 'success'
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          REGISTRY=566256065001.dkr.ecr.eu-west-2.amazonaws.com
+          ECR=$REGISTRY/portfolio
+
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq unzip
+
+          curl -sSfL https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o /tmp/awscliv2.zip
+          unzip -q -o /tmp/awscliv2.zip -d /tmp
+          sudo /tmp/aws/install --update
+
+          curl -sSfL https://github.com/google/go-containerregistry/releases/download/v0.20.3/go-containerregistry_Linux_x86_64.tar.gz \
+            | sudo tar -xz -C /usr/local/bin crane
+
+          aws ecr get-login-password --region eu-west-2 \
+            | crane auth login "$REGISTRY" -u AWS --password-stdin
+
+          crane copy "$IMAGE_NAME:$TAG" "$ECR:$TAG"
+          crane copy "$IMAGE_NAME:$TAG" "$ECR:latest"
+
+          echo "**DR image:** \`$ECR:$TAG\` (also \`latest\`)" >> "$GITHUB_STEP_SUMMARY"    
 
       - name: Summary
         run: |
